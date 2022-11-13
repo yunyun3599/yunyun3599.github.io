@@ -17,7 +17,7 @@ last_modified_at: 2022-11-10
 ## 1. _config.yml 파일 변경
 처음에 블로그를 시작하면 아래와 같은 화면이 나타납니다.  
 *<span style="color:gray; font-size:0.7rem;">포스트를 작성하는 기본적인 방법은 [여기](https://yunyun3599.github.io/blog/how_to_post/)에 있습니다.</span>*
-![](/assets/img/2022-11-10-project_setting_1.png)  
+![](/assets/img/2022-11-10-project_setting/2022-11-10-project_setting_1.png)  
 기본 값이므로 헤더에 Site Title과 Quick-Start Guide 라고 적혀있는 것을 볼 수 있습니다.  
 헤더 부분은 프로젝트의 `_config.yml` 파일에서 바꿀 수 있습니다.  
 
@@ -94,7 +94,7 @@ locale은 블로그에서 사용할 언어 세팅으로 아래와 같이 바꿀 
 항목이 있음을 알 수 있는데, **toc_label**은 포스트 내의 헤더를 기준으로 목차를 생성하는 설정에 관련된 부분입니다.  
 텍스트가 On this page로 설정되어 있기 때문에 실제로 목차 부분의 제목도 On this page로 나오는 것을 볼 수 있습니다.  
 
-![](/assets//img/2022-11-10-project_setting_2.png)
+![](/assets/img/2022-11-10-project_setting/2022-11-10-project_setting_2.png)
 
 ### 2-3 Site title
 title은 화면의 좌측 상단 메인 타이틀을 바꾸는 부분입니다.  

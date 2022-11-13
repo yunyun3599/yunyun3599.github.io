@@ -15,6 +15,7 @@ last_modified_at: 2022-11-13
 ---
 
 # Mypy
+
 ### mypy란?
 mypy는 정적 타입 검사 도구입니다.
 > 정적 타입 검사: 코드를 실행해보지 않고 타입 분석을 진행  
@@ -47,7 +48,7 @@ check_mypy(float_var)
 
 그럼 아래와 같은 결과를 얻을 수 있습니다.
 
-![](/assets/img/2022-11-13-mypy_pylint_makefile_1.png)
+![](/assets/img/2022-11-13-mypy_pylint_makefile/2022-11-13-mypy_pylint_makefile_1.png)
 
 int 형의 값을 파라미터로 받는 함수에 float 형의 변수를 보냈더니 타입 검사를 통해 문제를 찾아냈습니다.
 
@@ -64,6 +65,7 @@ check_mypy(int_var=float_var)  # type: ignore
 <br>  
 
 # Pylint 
+
 ### pylint란? & pylint 설치
 Pylint는 코드의 구조를 검사해주는 도구로, PEP-8을 준수했는지 여부를 검사합니다.
 
@@ -86,7 +88,7 @@ pylint pylint.py
 ```
 
 결과는 아래와 같습니다. 
-![](/assets/img/2022-11-13-mypy_pylint_makefile_2.png)
+![](/assets/img/2022-11-13-mypy_pylint_makefile/2022-11-13-mypy_pylint_makefile_2.png)
 
 pylint에서 발견한 위 파일의 문제점은 다음과 같습니다. 
 1. 마지막 빈 라인이 없습니다.
@@ -114,7 +116,7 @@ def func(var1, var2):
     print(a_a + b_b)
 ```
 
-![](/assets/img/2022-11-13-mypy_pylint_makefile_3.png)
+![](/assets/img/2022-11-13-mypy_pylint_makefile/2022-11-13-mypy_pylint_makefile_3.png)
 
 10점 만점에 10점 코드라는데요? 감사합니다 pylint.
 
@@ -168,7 +170,7 @@ checklist: lint	typehint test
 make checklist  
 ```
 여기서 타겟은 typehint, test, lint로 각 타겟별로 mypy, pytest, pylint 검사를 뒤에 적어준 파일에 대해 진행합니다. 
-![](/assets/img/2022-11-13-mypy_pylint_makefile_4.png)
+![](/assets/img/2022-11-13-mypy_pylint_makefile/2022-11-13-mypy_pylint_makefile_4.png)
 
 참고로 수행해본 결과 checklist에 명시된 순서대로 수행이 되는데, 앞 단계에서 오류가 나면 뒷 단계는 돌지 않는 것 같습니다.  
 

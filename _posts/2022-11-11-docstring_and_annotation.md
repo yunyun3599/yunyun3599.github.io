@@ -41,7 +41,7 @@ dict.update??
 >'D.update([E, ]**F) -> None.  Update D from dict/iterable E and F.\nIf E is present and has a .keys() method, then does:  for k in E: D[k] = E[k]\nIf E is present and lacks a .keys() method, then does:  for k, v in E: D[k] = v\nIn either case, this is followed by: for k in F:  D[k] = F[k]'
 
 결과로 나온 내용이 dict.update 함수의 docstring 내용이 됩니다.
-![](/assets//img//2022-11-11-docstring_and_annotation_1.png)
+![](/assets/img/2022-11-11-docstring_and_annotation/2022-11-11-docstring_and_annotation_1.png)
 
 위 코드는 dict 문서에서 update 함수 부분인데, 위에서 출력된 내용과 동일한 내용의 docstring이 작성되어 있음을 확인할 수 있습니다. 
 
