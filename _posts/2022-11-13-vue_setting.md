@@ -78,7 +78,7 @@ node -v
 <br>   
 
 # npm 설치
-npm은 Node.js 기반의 자바스크립트 오픈소스를 등록하고 간단한 명령어를 통해 설치하여 사용할 수 있게 해주는 패키지 매니저 입니다. 
+npm은 Node.js 기반의 자바스크립트 오픈소스를 등록하고 간단한 명령어를 통해 설치하여 사용할 수 있게 해주는 패키지 매니저 입니다.  
 앞에서 Node.js를 설치할 때 npm도 자동으로 함께 설치가 되었는데요, 다음 명령어를 통해 설치된 NPM 버전을 확인할 수 있습니다.  
 
 ```shell
@@ -96,7 +96,7 @@ npm -v
 여기서 vetur, javascript debugger, prettier - code formatter를 설치하면 됩니다. 
 
 ### ventur
-.vue 파일에 Syntax Highlighting 기능을 지원합니다.
+.vue 파일에 Syntax Highlighting 기능을 지원합니다.  
 이 기능이 있으면 변수, 메소드 명 등의 색상 처리가 다르게 되어 코드를 일고 작성하기에 용이합니다.  
 또한 코드에서 문법에 맞지 않는 오류를 알려주는 역할도 수행합니다.
 
