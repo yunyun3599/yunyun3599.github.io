@@ -57,7 +57,22 @@ readlink -f $(which javac)
 
 와 유사한 경로가 나올텐데, 이 경로에서 bin 디렉토리 전까지의 경로를 JAVA_HOME으로 추가합니다. 
 ```shell
-export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.352.b08-2.el7_9.aarch64
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.352.b08-2.el7_9.aarch64/
+```
+
+이렇게까지만 설정해도 평소에는 JAVA_HOME이 잘 등록되겠지만, hadoop이 실행되면서 ssh 접속을 할 때 .bashrc 관련된 설정은 값을 잃습니다.  
+따라서 `/hadoop_home/hadoop/etc/hadoop/hadoop-env.sh` 에 아래 내용을 추가해줍니다. 
+```
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.352.b08-2.el7_9.aarch64/
+```
+
+또한 추후에 hadoop 을 시작할 때 USER를 찾지 못하는 오류가 발생하기 때문에 `hadoop-env.sh`에 다음 내용도 추가해줍니다.  
+```shell
+export HDFS_NAMENODE_USER="root"
+export HDFS_DATANODE_USER="root"
+export HDFS_SECONDARYNAMENODE_USER="root"
+export YARN_RESOURCEMANAGER_USER="root"
+export YARN_NODEMANAGER_USER="root"
 ```
 
 ## ssh 설정
@@ -68,6 +83,12 @@ cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
 ssh-keygen -f /etc/ssh/ssh_host_rsa_key -t rsa -N ""
 ssh-keygen -f /etc/ssh/ssh_host_ecdsa_key -t ecdsa -N ""
 ssh-keygen -f /etc/ssh/ssh_host_ed25519_key -t ed25519 -N "" 
+```
+추후 컨테이너끼리 ssh 연결시에 yes 응답을 주지 않아도 되도록 사전에 known_hosts파일을 만들어보도록 하겠습니다.  
+```shell
+echo secondarynode,178.28.0.3 $(cat ssh_host_ecdsa_key.pub  | cut --delimiter=" " --fields=-2) >> ~/.ssh/known_hosts
+echo datanode01,172.28.0.4 $(cat ssh_host_ecdsa_key.pub  | cut --delimiter=" " --fields=-2) >> ~/.ssh/known_hosts
+echo datanode02,172.28.0.5 $(cat ssh_host_ecdsa_key.pub  | cut --delimiter=" " --fields=-2) >> ~/.ssh/known_hosts
 ```
 
 ## 하둡 설치
