@@ -24,12 +24,12 @@ Hadoop은 네임노드와 데이터노드로 이루어져 있는데요,
 ## 도커 base image pull & run
 저희는 Centos 환경의 도커에 hadoop을 설치할 계획이기 때문에 centos 이미지를 pull 받아오겠습니다. 
 ```shell
-docker pull centos:7
+$ docker pull centos:7
 ```
 
 받은 이미지를 실행시켜 줍니다.
 ```shell
-docker run -ti --name base centos:7 /bin/bash
+$ docker run -ti --name base centos:7 /bin/bash
 ```
 
 <br>
@@ -40,81 +40,81 @@ docker run -ti --name base centos:7 /bin/bash
 컨테이너 내에서 하둡 기본 이미지 생성을 위한 몇 가지 단계를 수행하도록 하겠습니다.  
 아래 명령어를 하나씩 컨테이너 내에서 실행합니다.
 ```shell
-yum update
-yum install wget -y
-yum install vim -y
-yum install openssh-server openssh-clients openssh-askpass -y
-yum install java-1.8.0-openjdk-devel.aarch64 -y
+$ yum update
+$ yum install wget -y
+$ yum install vim -y
+$ yum install openssh-server openssh-clients openssh-askpass -y
+$ yum install java-1.8.0-openjdk-devel.aarch64 -y
 ```
 java의 경우 만일 위의 버전을 지원하지 않는다면 `yum list java*jdk-devel` 명령어를 통해 지원하는 자바 버전을 확인 후 설치하시면 됩니다.  
 
 설치된 자바의 환경 변수 설정을 해주어야 합니다.  
 ```shell
-readlink -f $(which javac)
+$ readlink -f $(which javac)
 ```
 위의 명령 결과로   
 >/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.352.b08-2.el7_9.aarch64/bin/javac  
 
 와 유사한 경로가 나올텐데, 이 경로에서 bin 디렉토리 전까지의 경로를 JAVA_HOME으로 추가합니다. 
 ```shell
-export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.352.b08-2.el7_9.aarch64/
+$ export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.352.b08-2.el7_9.aarch64/
 ```
 
 이렇게까지만 설정해도 평소에는 JAVA_HOME이 잘 등록되겠지만, hadoop이 실행되면서 ssh 접속을 할 때 .bashrc 관련된 설정은 값을 잃습니다.  
 따라서 `/hadoop_home/hadoop/etc/hadoop/hadoop-env.sh` 에 아래 내용을 추가해줍니다. 
 ```
-export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.352.b08-2.el7_9.aarch64/
+$ export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.352.b08-2.el7_9.aarch64/
 ```
 
-또한 추후에 hadoop 을 시작할 때 USER를 찾지 못하는 오류가 발생하기 때문에 `hadoop-env.sh`에 다음 내용도 추가해줍니다.  
+또한 추후에 hadoop 을 시작할 d때 USER를 찾지 못하는 오류가 발생하기 때문에 `hadoop-env.sh`에 다음 내용도 추가해줍니다.  
 ```shell
-export HDFS_NAMENODE_USER="root"
-export HDFS_DATANODE_USER="root"
-export HDFS_SECONDARYNAMENODE_USER="root"
-export YARN_RESOURCEMANAGER_USER="root"
-export YARN_NODEMANAGER_USER="root"
+$ export HDFS_NAMENODE_USER="root"
+$ export HDFS_DATANODE_USER="root"
+$ export HDFS_SECONDARYNAMENODE_USER="root"
+$ export YARN_RESOURCEMANAGER_USER="root"
+$ export YARN_NODEMANAGER_USER="root"
 ```
 
 ## ssh 설정
 여기까지 완료가 됐다면 각 노드들이 패스워드 입력 단계 없이 서로 접속할 수 있도록 공개키를 생성해주도록 하겠습니다.  
 ```shell
-ssh-keygen -t rsa -P '' -f ~/.ssh/id_dsa
-cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
-ssh-keygen -f /etc/ssh/ssh_host_rsa_key -t rsa -N ""
-ssh-keygen -f /etc/ssh/ssh_host_ecdsa_key -t ecdsa -N ""
-ssh-keygen -f /etc/ssh/ssh_host_ed25519_key -t ed25519 -N "" 
+$ ssh-keygen -t rsa -P '' -f ~/.ssh/id_dsa
+$ cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
+$ ssh-keygen -f /etc/ssh/ssh_host_rsa_key -t rsa -N ""
+$ ssh-keygen -f /etc/ssh/ssh_host_ecdsa_key -t ecdsa -N ""
+$ ssh-keygen -f /etc/ssh/ssh_host_ed25519_key -t ed25519 -N "" 
 ```
 추후 컨테이너끼리 ssh 연결시에 yes 응답을 주지 않아도 되도록 사전에 known_hosts파일을 만들어보도록 하겠습니다.  
 ```shell
-echo secondarynode,178.28.0.3 $(cat ssh_host_ecdsa_key.pub  | cut --delimiter=" " --fields=-2) >> ~/.ssh/known_hosts
-echo datanode01,172.28.0.4 $(cat ssh_host_ecdsa_key.pub  | cut --delimiter=" " --fields=-2) >> ~/.ssh/known_hosts
-echo datanode02,172.28.0.5 $(cat ssh_host_ecdsa_key.pub  | cut --delimiter=" " --fields=-2) >> ~/.ssh/known_hosts
+$ echo secondarynode,178.28.0.3 $(cat ssh_host_ecdsa_key.pub  | cut --delimiter=" " --fields=-2) >> ~/.ssh/known_hosts
+$ echo datanode01,172.28.0.4 $(cat ssh_host_ecdsa_key.pub  | cut --delimiter=" " --fields=-2) >> ~/.ssh/known_hosts
+$ echo datanode02,172.28.0.5 $(cat ssh_host_ecdsa_key.pub  | cut --delimiter=" " --fields=-2) >> ~/.ssh/known_hosts
 ```
 
 ## 하둡 설치
 먼저 하둡을 설치할 디렉토리를 만들어주도록 하겠습니다. 
-```
-mkdir /hadoop_home
-cd /hadoop_home
+```shell
+$ mkdir /hadoop_home
+$ cd /hadoop_home
 ```
 
 저는 hadoop-3.3.4.tar.gz 를 받았는데요, wget을 통해서 아래처럼 다운받을 수 있습니다.   
 ```shell 
-wget "https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.4.tar.gz"
+$ wget "https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.3.4.tar.gz"
 ```
 
 설치 후에는 압축을 풀고 하둡을 설치합니다.  
-```
-tar xvfz hadoop-3.3.4.tar.gz
+```shell
+$ tar xvfz hadoop-3.3.4.tar.gz
 ```
 설치 후에는 hadoop-3.3.4 디렉토리에 대한 심볼릭 링크를 생성합니다. 
-```
-ln -s hadoop-3.4.3 hadoop
+```shell
+$ ln -s hadoop-3.4.3 hadoop
 ```
 
 설치가 완료됐다면 아래와 같이 ~/.bashrc 파일에 내용을 추가하여 환경변수 설정을 해줍니다.  
-```
-vim ~/.bashrc
+```shell
+$ vim ~/.bashrc
 ```
 아래 내용을 추가해주세요.
 ```
@@ -128,18 +128,18 @@ export PATH=$PATH:$HADOOP_HOME/sbin
 
 변경사항을 반영하기 위해 터미널을 재시작해보도록 하겠습니다.
 ```shell
-source ~/.bashrc
+$ source ~/.bashrc
 ```
 
 ## 하둡 설정파일 변경  
 하둡 설정 파일을 변경하기 위해 설정 파일이 있는 디렉토리로 이동합니다.  
 ```
-cd $HADOOP_CONFIG_HOME
+$ cd $HADOOP_CONFIG_HOME
 ```
 
 ### core-site.xml  
 ```shell
-vi core-site.xml
+$ vi core-site.xml
 ```
 아래 내용을 적어줍니다.  
 ```xml
@@ -160,12 +160,12 @@ vi core-site.xml
 
 hadoop.tmp.dir의 value에 적은 경로를 생성해주어야 하므로 아래와 같이 디렉토리를 생성해줍니다. 
 ```shell
-mkdir /hadoop_home/temp
+$ mkdir /hadoop_home/temp
 ```
 
 ### hdfs-site.xml
 ```shell
-vi hdfs-site.xml
+$ vi hdfs-site.xml
 ```
 ```xml
 <configuration>
@@ -200,13 +200,13 @@ vi hdfs-site.xml
 
 dfs.namenode.name.dir과 dfs.datanode.data.dir의 value에 적은 경로를 생성해주어야 하므로 아래와 같이 디렉토리를 생성해줍니다. 
 ```shell
-mkdir /hadoop_home/namenode_dir
-mkdir /hadoop_home/datanode_dir
+$ mkdir /hadoop_home/namenode_dir
+$ mkdir /hadoop_home/datanode_dir
 ```
 
 ### mapred-site.xml
 ```shell
-vi mapred-site.xml
+$ vi mapred-site.xml
 ```
 ```xml
 <configuration>
@@ -222,16 +222,16 @@ vi mapred-site.xml
 # 도커 이미지화
 네임노드를 포맷해줍니다.
 ```shell
-hadoop namenode -format
+$ hadoop namenode -format
 ```  
 그 후 다른 터미널을 열고 아래 명령어로 현재 컨테이너를 이미지화 해줍니다.
 ```shell
-docker commit base {원격리포지토리명}/hadoop:base
+$ docker commit base {원격리포지토리명}/hadoop:base
 ```
 
 ```docker images``` 명령어를 치면 hadoop:base 이미지가 생성되었음을 확인할 수 있습니다.  
 
 해당 이미지를 원격 리포지토리에 업로드하고 여러 장소에서 사용할 수 있도록 이미지를 push 해보도록 하겠습니다. 
 ```shell
-docker push {원격리포지토리명}/hadoop:base
+$ docker push {원격리포지토리명}/hadoop:base
 ```
