@@ -1,4 +1,4 @@
-# Dockerfile 작성법 
+# Dockerfile 작성법 및 도커 이미지 경량화
 
 ## 기본 구조
 도커 파일의 기본 구조는 아래와 같습니다.  
@@ -72,3 +72,78 @@ docker run --rm greeting:v1
 USER <user>[:<group>]
 ```
 도커 이미지 보안을 고려할 때 사용하게 됩니다.  
+
+ <br>
+
+## 도커 이미지 경량화
+도커 이미지 경량화란 빌드를 통해 생성되는 도커 이미지의 크기를 줄이는 작업을 이야기합니다.  
+도커 이미지 용량이 작아지면 push, pull 속도가 빨라지며 container를 띄우는 속도도 빨라집니다.  
+
+도커 이미지를 경량화할 수 있는 방법 중 몇 가지를 알아보도록 하겠습니다.  
+
+### 꼭 필요한 패키지 / 파일만 추가
+서버에 필요할 것 같은 패키지를 모두 설치하지 말고 꼭 필요한 부분만 설치해야함.  
+컨테이너는 하나의 프로세스를 실행하는 데 중점이 된 기술이므로 해당 프로세스를 실행하는 데 필요하지 않은 패키지나 파일은 굳이 추가하지 않는 것이 좋습니다.  
+
+### 컨테이너 레이어 수 줄이기  
+컨테이너 레이어 수는 도커 파일의 지시어 수와 동일합니다.  
+따라서 Dockerfile 내에 사용하는 지시어 수를 줄일 수록 컨테이너의 레이어 수를 줄일 수 됩니다.  
+예를 들어 RUN 명령어가 여러번 등장한다면 하나의 RUN 지시어로 통합하여 하나의 레이어로 통합해서 사용하는 방법이 있습니다.  
+
+```dockerfile
+RUN apt-get update
+RUN apt-get upgrade -y
+RUN apt-get install -y nginx
+RUN echo finish!
+```
+위와 같이 여러 RUN 명령어를 하나로 통합하면 아래와 같은 형태가 됩니다.  
+```dockerfile
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y nginx && \
+    echo finish!
+```
+두 이미지 각각을 image:expand와 image:compress 라는 이름으로 빌드했는데 약소하지만 용량에 차이가 생겼음을 확인할 수 있습니다.  
+![](/assets/img/2022-12-03-how_to_write_dockerfile/docker_run_compress.png)
+
+또한 패키지 설치 시 이미지에는 cache가 필요하지 않기 때문에 캐시를 남기지 않는 옵션을 추가해주는 것이 좋습니다.  
+
+
+### 경량 베이스 이미지 사용하기  
+베이스 이미지 자체를 경량 이미지를 사용하여 이미지의 용량을 줄일 수도 있습니다.  
+많이 사용하는 경량 이미지의 예로는 아래와 같은 것이 있습니다.  
+- debian 계열의 slim
+- alpine 이라는 리눅스 배포버전들
+- stretch 라는 이미지: 파일 시스템만 존재하는 비어있는 이미지라 용량이 굉장히 작음.  
+
+### 멀티 스테이지 빌드 사용  
+멀티 스테이지 빌드 기능을 이용하면 빌드 스테이지와 릴리즈 스테이즈를 나누어서 진행하게 됩니다.  
+따라서 빌드에 필요한 의존성들은 빌드 스테이지에서 사용하고, 릴리즈 스테이지에서는 빌드 결과물만 복사해서 사용하여 릴리즈 이미지의 용량을 줄일 수 있게 됩니다.   
+
+멀티 스테이지를 사용한 Dockerfile은 다음과 같은 구조를 가집니다.  
+```dockerfile
+FROM node:16-alpine AS base
+LABEL maintainer="author"
+LABEL description="Dockerfile to practice multistage"
+
+WORKDIR /app
+
+COPY package*.json
+
+# build phase
+FROM base AS build
+RUN npm install
+
+# release phase
+FROM base AS release
+# --from=build를 통해 빌드 스테이지에서 파일을 복사해옴
+COPY --from=build /app/node_modules ./node_modules
+# app 소스코드 복사
+COPY . .
+
+EXPOSE 8080
+CMD ["node", "server.js"]
+```
+
+앞의 `FROM` 절에서 사용할 베이스 이미지를 지정하고 해당 이미지를 `AS base` 구문을 통해 base라고 지정해두었습니다.  
+그리고 그 후의 build와 release 단계에서 이 이미지를 베이스 이미지로 사용해 각 단계에 필요한 작업을 수행하는 것을 볼 수 있습니다. 
