@@ -1,6 +1,6 @@
 ---
 title:  "Vue Component(3)"
-excerpt: "v-for, v-if, v-show, v-on, compute, watch에 대해 알아봅니다. "
+excerpt: "리스트 랜더링 (v-for), 조건에 따른 랜더링(v-if, v-show), 이벤트에 따른 로직(v-on)에 대해 알아봅니다. "
 
 categories:
   - Vue.js
