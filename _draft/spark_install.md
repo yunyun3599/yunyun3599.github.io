@@ -16,7 +16,7 @@ $ which pyspark
 mac이고 pip로 install 했는데 `/opt/homebrew/bin/pyspark`가 나옴
 `/opt/homebrew/bin/`는 PATH에 잡혀있으므로 아무데서나 pyspark를 실행해보면 문제가 없을 시에 정상 동작해야함.  
 근데 나는 아래와 같은 오류가 뜸  
-![](/assets/img/2022-11-25-spark_install/spark_install_env_setting.png)
+![](/assets/img/2022-11/2022-11-25-spark_install/spark_install_env_setting.png)
 
 ### 해결법
 zsh를 쓰고 있으므로 ~/.zshrc에 아래 내용 추가
@@ -25,11 +25,11 @@ $ export SPARK_HOME=/opt/homebrew
 ```
 
 이제 잘 되어야 할 것 같으나 아래와 같은 문제가 발생함  
-![](/assets/img/2022-11-25-spark_install/spark_install_scala_problem.png)
+![](/assets/img/2022-11/2022-11-25-spark_install/spark_install_scala_problem.png)
 뭔가 찾아야하는 directory를 제대로 못찾은 것 같음  
 
 뿐만 아니라 pyspark 파일 내용을 보면 더 이상함
-![](/assets/img/2022-11-25-spark_install/spark_install_pyspark_content.png)
+![](/assets/img/2022-11/2022-11-25-spark_install/spark_install_pyspark_content.png)
 저기서 참고하는 위치라면 앞에서 설정한 `SPARK_HOME`은 `/opt/homebrew` 이므로 `/opt/homebrew/python/pyspark.shell.py` 등의 파일이 있어야하는데 없음.  
 
 따라서 경로 설정이 잘못되었다고 볼 수 있음  

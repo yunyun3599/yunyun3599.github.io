@@ -46,7 +46,7 @@ Select의 경우 v-model을 이용해 데이터 바인딩을 합니다.
 
 ```
 각 option별로 할당된 value값이 hexcode 데이터의 값이 됩니다.  
-![](/assets/img/2022-11-22-vue_component_2/2022-11-21-vue_component_2_1.png){: width="80%"}
+![](/assets/img/2022-11/2022-11-22-vue_component_2/2022-11-21-vue_component_2_1.png){: width="80%"}
 
 
 ## Checkbox
@@ -71,7 +71,7 @@ v-model이 이용하는 값은 체크박스의 value 속성이 아니라 checked
 </script>
 
 ```
-![](/assets/img/2022-11-22-vue_component_2/2022-11-21-vue_component_2_2.png){: width="80%"}
+![](/assets/img/2022-11/2022-11-22-vue_component_2/2022-11-21-vue_component_2_2.png){: width="80%"}
 
 
 ## 라디오
@@ -101,7 +101,7 @@ v-model이 이용하는 값은 체크박스의 value 속성이 아니라 checked
     }
 </script>
 ```
-![](/assets/img/2022-11-22-vue_component_2/2022-11-21-vue_component_2_3.png){: width="80%"}
+![](/assets/img/2022-11/2022-11-22-vue_component_2/2022-11-21-vue_component_2_3.png){: width="80%"}
 
 ## Img
 img의 경우에는 img의 주소를 객체의 src에 바인딩하는 경우를 살펴보도록 하겠습니다.  
@@ -172,7 +172,7 @@ img의 경우에는 img의 주소를 객체의 src에 바인딩하는 경우를 
     }
 </style>
 ```
-![](/assets/img/2022-11-22-vue_component_2/2022-11-21-vue_component_2_5.png){: width="80%"}
+![](/assets/img/2022-11/2022-11-22-vue_component_2/2022-11-21-vue_component_2_5.png){: width="80%"}
 
 ## 인라인 스타일  
 인라인 스타일은 데이터를 오브젝트로 선언해서 바인딩할 수 있습니다.  

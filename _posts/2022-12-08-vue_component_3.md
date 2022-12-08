@@ -60,7 +60,7 @@ v-for를 이용하면 리스트 내에 있는 원소들 하나하나에 대해 �
 ```
 {% endraw %}  
 결과로 다음 화면이 나타납니다.  
-![](/assets/img/2022-12-08-vue_component_3/v-for.png)
+![](/assets/img/2022-12/2022-12-08-vue_component_3/v-for.png)
 
 <br>
 
@@ -123,10 +123,10 @@ v-show와 v-if는 특정 값의 참 거짓 여부에 따라 컴포넌트를 보�
 ```
 {% endraw %}  
 마케팅 수신 동의를 하지 않는 경우 화면은 아래와 같습니다.  
-![](/assets/img/2022-12-08-vue_component_3/v_if_marketing_disagree.png)
+![](/assets/img/2022-12/2022-12-08-vue_component_3/v_if_marketing_disagree.png)
 
 마케팅 수신 동의를 한 경우 화면은 아래와 같습니다.  
-![](/assets/img/2022-12-08-vue_component_3/v_if_marketing_agree.png)
+![](/assets/img/2022-12/2022-12-08-vue_component_3/v_if_marketing_agree.png)
 
 # v-on
 ## 클릭 이벤트
@@ -205,7 +205,7 @@ v-show와 v-if는 특정 값의 참 거짓 여부에 따라 컴포넌트를 보�
 {% endraw %}
 
 아래 사진과 같은 화면을 통해 버튼을 눌러 counter 값을 조정할 수 있게 됩니다.  
-![](/assets/img/2022-12-08-vue_component_3/on_click_event.png)
+![](/assets/img/2022-12/2022-12-08-vue_component_3/on_click_event.png)
 
 
 ## Change 이벤트

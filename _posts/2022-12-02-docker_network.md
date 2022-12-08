@@ -25,7 +25,7 @@ last_modified_at: 2022-12-02
 - **veth**: 컨테이너 내부의 eth0과 대응되어 docker0에 연결될 수 있도록 해주는 가상 eth 
 
 정리해보면, 컨테이너 내부의 eth0 하나하나마다 veth가 생성되고, veth를 통해 컨테이너의 eth0이 docker0에 연결되게 되는 것입니다.  
-![](/assets/img/2022-11-29-docke_network/docker_network_structure.jpeg
+![](/assets/img/2022-11/2022-11-29-docke_network/docker_network_structure.jpeg
 )
 
 ## 포트 포워딩
@@ -57,7 +57,7 @@ $ docker run -d -p 80:80 nginx
 ```sh
 $ curl localhost:80
 ```
-![](/assets/img/2022-11-29-docke_network/curl_localhost80.png)
+![](/assets/img/2022-11/2022-11-29-docke_network/curl_localhost80.png)
 응답이 잘 오는 것을 확인할 수 있습니다. 
 
 ## expose / publish
@@ -69,7 +69,7 @@ $ docker run -d --expose 80 nginx
 ```sh
 $ docker run -d -p 80 nginx
 ```
-![](/assets/img/2022-11-29-docke_network/expose_and_publish.png)
+![](/assets/img/2022-11/2022-11-29-docke_network/expose_and_publish.png)
 expose를 이용한 컨테이너는 호스트와 포트가 바인딩되어있지 않은 것을 확인할 수 있습니다.  
 
 ## 도커 네트워크 드라이버
@@ -103,7 +103,7 @@ docker run -ti --net none ubuntu:focal
 ```sh
 docker inspect -f "{{json .NetworkSettings.Networks}}" [container_name]
 ```
-![](/assets/img/2022-11-29-docke_network/docker_inspect_none.png)
+![](/assets/img/2022-11/2022-11-29-docke_network/docker_inspect_none.png)
 결과로 나온 부분에서 IPAddress 부분이 비어있으며, DriverOpts 값도 null인 것을 확인할 수 있습니다.   
 
 None 드라이버는 해당 컨테이너가 네트워크 기능을 사용할 필요가 없거나 Custom Networking을 사용해야 할 때 이용합니다.  
@@ -144,7 +144,7 @@ $ docker exec -ti [nginx_container_id] bash
 ```sh
 $ curl grafana:3000
 ```
-![](/assets/img/2022-11-29-docke_network/curl_grafana.png)
+![](/assets/img/2022-11/2022-11-29-docke_network/curl_grafana.png)
 제대로 응답이 오는 것을 확인할 수 있습니다.  
 
 --net-alias 옵션을 주지 않고 grafana 컨테이너를 다시 띄워보도록 하겠습니다.  
@@ -166,12 +166,12 @@ $ curl grafana:3000
 ```sh
 $ docker inspect [grafana_container_id] | grep IPAddress
 ```
-![](/assets/img/2022-11-29-docke_network/docker_inspect_grafana.png)
+![](/assets/img/2022-11/2022-11-29-docke_network/docker_inspect_grafana.png)
 저는 172.18.0.3 주소를 가지고 있으니 해당 주소를 이용해서 다시 curl 명령을 날려보도록 하겠습니다.  
 ```sh
 $ curl 172.18.0.3:3000
 ```
-![](/assets/img/2022-11-29-docke_network/curl_ipaddress_grafana.png)
+![](/assets/img/2022-11/2022-11-29-docke_network/curl_ipaddress_grafana.png)
 
 도메인 설정을 하지 않았으므로 grafana라는 도메인 명으로는 접근이 불가능하지만 ip주소를 통해서는 접근이 가능함을 알 수 있습니다.  
 {% endraw %}

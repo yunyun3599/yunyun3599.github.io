@@ -107,7 +107,7 @@ pull을 통해 local로 가지고 와서 사용할 수 있습니다.
         ```sh
         $ docker run -ti ubuntu 
         ```
-        ![](/assets/img/2022-11-24-docker_image_container/docker_run_ti_ubuntu.png)
+        ![](/assets/img/2022-11/2022-11-24-docker_image_container/docker_run_ti_ubuntu.png)
         위의 상태에서 exit 을 통해서 빠져나오면 빠져나오자 마자 컨테이너가 종료됩니다.  
         컨테이너 종료 없이 빠져나오려면 `ctrl + p + q`를 누르면 됩니다.  
                 

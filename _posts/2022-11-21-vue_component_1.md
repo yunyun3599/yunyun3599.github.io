@@ -41,7 +41,7 @@ Vue에서 컴포넌트는 View, Data, Code로 이루어져 있습니다.
 위의 코드는 아주 간단한 코드이기 때문에 아직 딱히 메서드나 로직은 들어가지 않았지만, title이라는 변수명의 데이터는 포함하고 있습니다.  
 
 위의 코드와 같은 페이지는 아래 사진과 같은 모습의 페이지를 렌더링하게 됩니다.  
-![](/assets/img/2022-11-21-vue_component/2022-11-21-vue_component_1.png)
+![](/assets/img/2022-11/2022-11-21-vue_component/2022-11-21-vue_component_1.png)
 
 ## 컴포넌트 기본 구조
 많은 상황에서 사용되는 컴포넌트의 기본 구조는 아래와 같은 형태입니다. 
@@ -165,7 +165,7 @@ html 태그를 바인딩 한 예시 코드는 아래와 같습니다.
 ```
 
 해당 페이지는 아래와 같습니다.  
-![](/assets/img/2022-11-21-vue_component/2022-11-21-vue_component_2.png)  
+![](/assets/img/2022-11/2022-11-21-vue_component/2022-11-21-vue_component_2.png)  
 
 앞에서처럼 ``{{ }}``를 사용한 경우는 html 문서의 내용이 그대로 출력되었으나, v-html를 사용한 부분은 원하는대로 html이 잘 적용되어 나타난 것을 확인할 수 있습니다. 
 
@@ -193,7 +193,7 @@ html 태그를 바인딩 한 예시 코드는 아래와 같습니다.
 여기서 **"inputData"**는 아래 `data() { }` 내부에 정의되어 있는 모델입니다.  
 화면에서 input창의 값을 변경하면 `<p>` 태그 내에서 출력하고 있는 inputData 데이터의 내용도 실시간으로 바뀌는 것을 확인할 수 있습니다.  
 
-![](/assets/img/2022-11-21-vue_component/2022-11-21-vue_component_3.png){: width="70%"" }
+![](/assets/img/2022-11/2022-11-21-vue_component/2022-11-21-vue_component_3.png){: width="70%"" }
 
 ## Input type=number
 input에서 number 타입을 받고자 하는 경우에는 text를 받을 때와 약간의 차이가 있습니다.  
@@ -219,7 +219,7 @@ input에서 number 타입을 받고자 하는 경우에는 text를 받을 때와
 ```
 앞에서는 text 이번 코드에서는 number를 받으려고 했으므로 두 데이터를 화면에 보여줄 때 동일하게 +1을 해보았는데요, 아래와 같은 결과가 나왔습니다.  
 
-![](/assets/img/2022-11-21-vue_component/2022-11-21-vue_component_4.png){: width="70%"}  
+![](/assets/img/2022-11/2022-11-21-vue_component/2022-11-21-vue_component_4.png){: width="70%"}  
 텍스트로 받았을 때는 1이 문자열로 뒤에 붙었고, 숫자로 받았을 때는 계산되었음을 확인할 수 있습니다.  
 {% endraw %}
 ## Textarea

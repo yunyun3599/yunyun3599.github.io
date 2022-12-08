@@ -90,7 +90,7 @@ docker-compose.yml 파일에는 최상위 옵션 4가지가 존재합니다.
 docker compose 명령어를 알아보기에 앞서 docker-compose로 구성되는 간단한 프로젝트를 하나 생성해보도록 하겠습니다.  
 이 프로젝트에는 redis와 간단한 flask 앱이 포함되어 있습니다.  
 작업할 디렉터리 하에 build 디렉터리를 만들고 app.py, docker-compose.yml, Dockerfile, requirements.txt 총 4가지 파일을 생성합니다.  
-![](/assets/img/2022-12-05-docker_compose/docker_compose_file_list.png)
+![](/assets/img/2022-12/2022-12-05-docker_compose/docker_compose_file_list.png)
 
 각 파일을 아래와 같이 작성해줍니다.  
 ```python
@@ -155,11 +155,11 @@ redis
 ```sh
 $ docker compose up
 ```
-![](/assets/img/2022-12-05-docker_compose/docker_compose_up_log.png)
+![](/assets/img/2022-12/2022-12-05-docker_compose/docker_compose_up_log.png)
 redis 서비스의 경우 필요한 redis 이미지를 pull 받아오고, web 서비스의 경우 이미지를 새로 빌드해야 하므로 Dockerfile을 통해 이미지를 빌드하는 단계를 거쳐 서비스를 띄우는 것을 확인할 수 있습니다.  
 
 로그의 중간 부분을 보면 default network를 생성하는 부분도 확인할 수 있습니다.  
-![](/assets/img/2022-12-05-docker_compose/create_default_network.png)
+![](/assets/img/2022-12/2022-12-05-docker_compose/create_default_network.png)
 build_default라는 이름으로 브릿지 네트워크를 생성했는데, 여기에서 build는 프로젝트명을 의미합니다.  
 프로젝트 명을 따로 설정하지 않은 경우에 프로젝트명은 디렉터리 명을 사용하게 됩니다.  
 
@@ -176,7 +176,7 @@ $ docker compose -p my-project up -d
 ```sh
 $ docker compose ls
 ```
-![](/assets/img/2022-12-05-docker_compose/docker-compose-ls.png)
+![](/assets/img/2022-12/2022-12-05-docker_compose/docker-compose-ls.png)
 지정한 이름으로 프로젝트가 잘 생성된 것을 확인할 수 있습니다.  
 
 ### 프로젝트 종료 관련 명령어

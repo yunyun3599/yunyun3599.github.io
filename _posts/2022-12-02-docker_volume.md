@@ -67,7 +67,7 @@ $ docker run -ti --name test -v ~/study/docker-study/volume:/data ubuntu bash
 $ /data/print.sh
 ```
 앞에서 작성한 hello!!라는 문장이 프린트 되는 것을 확인할 수 있습니다.   
-![](/assets/img/2022-11-30-docker_volume/hostmount.png)
+![](/assets/img/2022-11/2022-11-30-docker_volume/hostmount.png)
 
 ## 볼륨 컨테이너
 특정 컨테이너의 볼륨 마운트를 공유하는 방식입니다.     
@@ -75,7 +75,8 @@ $ /data/print.sh
 ```sh
 $ docker run --volumes-from [volume 컨테이너] [이미지]
 ```
-<br>
+<br>   
+
 볼륨 컨테이너 마운트도 실제로 만들어보도록 하겠습니다.  
 앞에서 호스트 볼륨과 마운트한 것과 동일한 방식으로 컨테이너를 하나 띄웁니다.  
 ```sh
@@ -86,7 +87,7 @@ $ docker run -d -ti --name test --rm -v ~/study/docker-study/volume:/data ubuntu
 $ docker run -ti --volumes-from test ubuntu bash
 ```
 컨테이너 내에서 /data 경로로 이동하면 마운트할 때 사용한 컨테이너의 /data 경로에 위치해있던 print.sh 파일이 새로 생성한 컨테이너 내에도 있음을 확인할 수 있습니다.   
-![](/assets/img/2022-11-30-docker_volume/volumes-from.png)
+![](/assets/img/2022-11/2022-11-30-docker_volume/volumes-from.png)
 
 ## 도커 볼륨
 도커가 제공하는 볼륨 관리 기능을 활용하여 데이터를 보존하는 방식입니다.  
@@ -107,7 +108,7 @@ db라는 이름의 도커 볼륨을 생성한 후 mysql이미지를 이용해 �
 $ docker volume create --name db
 ```
 생성된 도커 볼륨에 대한 정보를 `docker volume inspect db` 명령어를 통해 확인해보았습니다.  
-![](/assets/img/2022-11-30-docker_volume/docker_volume_inspect.png)
+![](/assets/img/2022-11/2022-11-30-docker_volume/docker_volume_inspect.png)
 위에서 생성한 볼륨을 가지고 mysql 이미지를 run 한 컨테이너를 생성하도록 하겠습니다.  
 ```sh
 $ docker run \
@@ -134,5 +135,5 @@ $ docker run -v [볼륨이름]:[마운트경로]:ro [이미지명]
 docker run -d -ti --name test --rm -v ~/study/docker-study/volume:/data:ro ubuntu bash
 ```
 후에 마운트된 경로로 가서 새로운 파일을 만들려고 시도해보면 아래와 같은 결과가 나옵니다.  
-![](/assets/img/2022-11-30-docker_volume/mount_read_only.png)
+![](/assets/img/2022-11/2022-11-30-docker_volume/mount_read_only.png)
 읽기 전용으로 마운트된 경로이기 때문에 새로운 파일 생성이나 수정이 불가능한 것을 확인할 수 있습니다.  

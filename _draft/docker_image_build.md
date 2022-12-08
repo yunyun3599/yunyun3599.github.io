@@ -3,7 +3,7 @@
 ## 도커 이미지 구조
 도커 이미지: 레이어 아키텍처  
 새로운 사항이 생기면 새로운 레이어가 위에 쌓이는 구조
-![](/assets/img/2022-12-02-docker_image_build/docker_image_structure.png)
+![](/assets/img/2022-12/2022-12-02-docker_image_build/docker_image_structure.png)
 
 이미지를 이용해서 컨테이너를 생성하는데, 이미지 레이어에 속해있는 부분은 Read Only이고, 그 위에 쌓이는 컨테이너의 레이어는 Read/Write가 모두 가능합니다.  
 
@@ -12,7 +12,7 @@
 $ docker image inspect [이미지명]
 ```
 inspect 한 결과에서 Layer 부분을 보면 아래와 같이 각 레이어별로 해쉬값을 볼 수 있습니다.  
-![](/assets/img/2022-12-02-docker_image_build/image_inspect.png)
+![](/assets/img/2022-12/2022-12-02-docker_image_build/image_inspect.png)
 
 ## Dockerfile 없이 이미지 생성
 기존 컨테이너를 기반으로 새 이미지를 생성하는 방법 -> docker commit 이용  
@@ -50,7 +50,7 @@ $ docker image inspect -f {{.RootFS.Layers}} practice-ubuntu:v1
 ```sh
 $ docker image inspect -f {{.RootFS.Layers}} ubuntu:focal
 ```
-![](/assets/img/2022-12-02-docker_image_build/layer_of_ubuntu_and_practice.png)
+![](/assets/img/2022-12/2022-12-02-docker_image_build/layer_of_ubuntu_and_practice.png)
 이미지는 앞에서 말했듯이 레이어 구조이기 때문에, `practice-ubuntu:v1` 이미지가 `ubuntu:focal` 이미지의 레이어를 포함하고 있음을 확인할 수 있습니다.  
 
 {% endraw %}
@@ -97,13 +97,13 @@ echo this is example
 ```sh
 $ docker build -t example:v1 .
 ```
-![](/assets/img/2022-12-02-docker_image_build/docker_image_build.png)
+![](/assets/img/2022-12/2022-12-02-docker_image_build/docker_image_build.png)
 마지막으로 생성한 이미지를 실행합니다.  
 ```sh
 $ docker run example:v1
 ```
 위의 쉘 스크립트에서 작성한 내용이 수행되는 것을 확인할 수 있습니다. 
-![](/assets/img/2022-12-02-docker_image_build/docker_run_result.png)
+![](/assets/img/2022-12/2022-12-02-docker_image_build/docker_run_result.png)
 
 ## 빌드 컨텍스트
 빌드 컨텍스트는 도커 빌드 명령 수행 시 현재 디렉토리를 의미합니다.  

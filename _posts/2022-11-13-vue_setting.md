@@ -20,7 +20,7 @@ VSCode를 이용하면 다양한 플러그인들을 설치할 수 있고 이런 
 이 외에도 개발에 필요한 여러 편의성을 제공하기 때문에 정말 많이 사용되는 IDE 입니다.  
 
 설치 방법은 [vscode 공식 사이트](https://code.visualstudio.com/download)에서 본인 운영체제에 맞는 설치파일을 다운로드해주시면 됩니다.
-![](/assets/img/2022-11-13-vue_setting/2022-11-13-vue_setting_1.png)
+![](/assets/img/2022-11/2022-11-13-vue_setting/2022-11-13-vue_setting_1.png)
 
 mac의 경우 설치파일을 다운 받은 후에 별도의 설치 과정이 없으므로 잘 받았지셨으리라 믿겠습니다.. (믿음의 코딩👍)
 
@@ -32,7 +32,7 @@ Node.js는 자바스크립트 런타임 환경으로 서버 프로그램 개발�
 
 사실 저도 무슨 말인지 잘 모르겠어서 생각을 좀 해보니 이런 말인 것 같습니다.  
 저희가 브라우저를 켜서 개발자도구를 들어가면 (fn + f12) console창을 볼 수 있는데요, 여기서 자바스크립트 언어로 코드를 짤 수 있습니다. 
-![](/assets/img/2022-11-13-vue_setting/2022-11-13-vue_setting_2.png)
+![](/assets/img/2022-11/2022-11-13-vue_setting/2022-11-13-vue_setting_2.png)
 
 이건 브라우저에서 자바스크립트를 실행시키는 것이겠죠?  
 이런식으로 원래 자바스크립트가 구동되는 고향(?)은 브라우저인데 Node.js를 통해 이 친구를 서버로 이사시켜서 서버에서도 자바스크립트를 동작시킬 수 있는 환경을 만들어준다는 의미인 듯 합니다.  
@@ -40,10 +40,10 @@ Node.js는 자바스크립트 런타임 환경으로 서버 프로그램 개발�
 또한 Vue로 개발을 진행할 때 수많은 라이브러리들을 설치해야하는데, 이런 라이브러리 설치를 위해서는 Node.js가 설치되어야 합니다.  
 
 Node.js 설치는 [Node.js 공식 사이트](https://nodejs.org/ko/download/)에서 본인의 os 에 맞는 버전을 다운로드 받습니다. 
-![](/assets/img/2022-11-13-vue_setting/2022-11-13-vue_setting_3.png)
+![](/assets/img/2022-11/2022-11-13-vue_setting/2022-11-13-vue_setting_3.png)
 
 다운 받은 파일을 클릭하고 이런 창이 뜨면 계속을 계속 눌러 설치를 완료합니다.
-![](/assets/img/2022-11-13-vue_setting/2022-11-13-vue_setting_4.png)
+![](/assets/img/2022-11/2022-11-13-vue_setting/2022-11-13-vue_setting_4.png)
 
 Node.js가 잘 깔렸는지 확인하기 위해 버전을 확인해보겠습니다.  
 ```shell
@@ -91,7 +91,7 @@ npm -v
 # Vue 개발에 유용한 Vscode Extension 설치 
 익스텐션은 vscode 좌측 탭에서 Extension(네모 모양 4개 아이콘)을 눌러 들어가거나 cmd+shift+X를 통해 들어갈 수 있습니다. 
 
-![](/assets/img/2022-11-13-vue_setting/2022-11-13-vue_setting_5.png)
+![](/assets/img/2022-11/2022-11-13-vue_setting/2022-11-13-vue_setting_5.png)
 
 여기서 vetur, javascript debugger, prettier - code formatter를 설치하면 됩니다. 
 

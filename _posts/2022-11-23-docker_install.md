@@ -69,14 +69,14 @@ $ brew install minikube
 ```sh
 minikube start --driver docker
 ```
-![](/assets/img/2022-11-23-docker_install/kubernetes_install.png)
+![](/assets/img/2022-11/2022-11-23-docker_install/kubernetes_install.png)
 
 - **minikube 상태 확인**
 ```sh
 minikube status
 ```
 위의 명령어를 통해 해당 minikube 위에서 클러스터가 잘 작동하고 있는 지 확인 가능합니다.  
-![](/assets/img/2022-11-23-docker_install/minkube_status.png)
+![](/assets/img/2022-11/2022-11-23-docker_install/minkube_status.png)
 
 - **minikube로 띄운 클러스터의 정보 확인**
 ```sh
@@ -84,11 +84,11 @@ kubectl cluster-info
 ```
 kubernetes control plane이 어디에 떠있는 지 확인 가능합니다.  
 구성요소로 coreDNS도 실행되고 있음을 확인할 수 있습니다.  
-![](/assets/img/2022-11-23-docker_install/kubectl_cluster-info.png)
+![](/assets/img/2022-11/2022-11-23-docker_install/kubectl_cluster-info.png)
 
 - **kubectl 통신 설정**  
 kubectl이 kubernetes cluster와 통신하려면 설정파일이 필요한데, 이 설정 파일은 ~/.kube/config 파일입니다. 
-![](/assets/img/2022-11-23-docker_install/config.png)
+![](/assets/img/2022-11/2022-11-23-docker_install/config.png)
 
   - **clusters**
     - 관리할 클러스터 목록  
@@ -105,7 +105,7 @@ kubectl이 kubernetes cluster와 통신하려면 설정파일이 필요한데, �
 $ kubectl get nodes
 ```
 kubectl이 접속하게되는 클러스터의 노드 정보를 확인할 수 있습니다. 
-![](/assets/img/2022-11-23-docker_install/kubectl_get_nodes.png)
+![](/assets/img/2022-11/2022-11-23-docker_install/kubectl_get_nodes.png)
 
 ### minikube 기본 사용법
 0. 클러스터 시작
@@ -141,25 +141,25 @@ minikube addons
 ```sh
 $ minikube addons
 ```
-![](/assets/img/2022-11-23-docker_install/minikube_addons.png)
+![](/assets/img/2022-11/2022-11-23-docker_install/minikube_addons.png)
 
 **addons 제공 리스트 확인**
 ```sh
 $ minikube addons list
 ```
-![](/assets/img/2022-11-23-docker_install/addons_list.png)
+![](/assets/img/2022-11/2022-11-23-docker_install/addons_list.png)
 
 **addons 이용해 ingress 활성화**
 ```sh
 $ minikube addons enable ingress
 ```
-![](/assets/img/2022-11-23-docker_install/addons_enable_ingress.png)
+![](/assets/img/2022-11//2022-11-23-docker_install/addons_enable_ingress.png)
 
 ### minikube 노드에 ssh로 접속
 ```sh
 $ minikube ssh
 ```
-![](/assets/img/2022-11-23-docker_install/minikube_ssh.png)
+![](/assets/img/2022-11/2022-11-23-docker_install/minikube_ssh.png)
 
 ### 로컬의 kubectl과 minikube의 kubectl 버전이 다른 경우
 두 kubectl의 버전이 다르다면 이로 인해 문제가 날 수 있습니다.  
@@ -167,11 +167,11 @@ $ minikube ssh
 ```sh
 $ kubectl version
 ```
-![](/assets/img/2022-11-23-docker_install/kubectl_version.png)
+![](/assets/img/2022-11/2022-11-23-docker_install/kubectl_version.png)
 > Client Version과 Server Version이 다름  
 
 ```sh
 $ minikube kubectl version
 ```
-![](/assets/img/2022-11-23-docker_install/minikube_kubectl_version.png)
+![](/assets/img/2022-11/2022-11-23-docker_install/minikube_kubectl_version.png)
 > minikube kubectl version을 한 결과 Client Version과 Server Version이 같아짐

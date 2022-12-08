@@ -76,7 +76,7 @@ python 파일에서 print하도록 한 문장이 출력되면 됩니다.
 ```sh
 docker run --entrypoint echo ubuntu hello world
 ```
-![](/assets/img/2022-11-25-docker_entrypoint_command/docker_run_entrypoint_option_override.png)
+![](/assets/img/2022-11/2022-11-25-docker_entrypoint_command/docker_run_entrypoint_option_override.png)
 entrypoint override 없이 그냥 동작시키면 bash가 실행되었는데, entrypoint와 command를 override 한 결과 `echo hello world` 가 실행됩니다.  
 
 <br>
@@ -87,7 +87,7 @@ entrypoint override 없이 그냥 동작시키면 bash가 실행되었는데, en
 ```sh
 $ docker run --help
 ```
-![](/assets/img/2022-11-25-docker_container_environment_variable/docker_run_help.png)
+![](/assets/img/2022-11/2022-11-25-docker_container_environment_variable/docker_run_help.png)
 -e 부분을 보면 `--env` 와 `--env-file` 옵션이 있음을 확인할 수 있습니다. 
 
 -e 옵션을 주어 환경변수를 컨테이너 생성 시점에 만들어보도록 하겠습니다.  
@@ -113,5 +113,5 @@ VAR_STR=abc
 ```sh
 $ docker run -ti --env-file sample_env ubuntu:focal env
 ```
-![](/assets/img/2022-11-25-docker_container_environment_variable/2022-11-29-env_file.png)
+![](/assets/img/2022-11/2022-11-25-docker_container_environment_variable/2022-11-29-env_file.png)
 

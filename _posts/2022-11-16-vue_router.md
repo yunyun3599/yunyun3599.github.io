@@ -37,7 +37,7 @@ $ vue add router
 $ npm run serve
 ```
 위 명령어를 통해 서버를 재시작하고 http://localhost:8080 에 접속하면 화면 상단에 Home|About 링크가 생성되는데요, 이 링크를 누르면 화면이 전환되는 것을 확인할 수 있습니다.  
-![](/assets/img/2022-11-18-vue_router/2022-11-18-vue_router_1.png)
+![](/assets/img/2022-11/2022-11-18-vue_router/2022-11-18-vue_router_1.png)
 
 vue-router를 설치하면서 몇 가지 파일의 내용이 바뀌었는데요, App.js부터 확인해보도록 하겠습니다.  
 ```js

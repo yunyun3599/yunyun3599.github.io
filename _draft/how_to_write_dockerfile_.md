@@ -64,7 +64,7 @@ docker build -f Dockerfile2 --build-arg name=이름 -t greeting:v1 .
 docker run --rm greeting:v1
 ```
 도커파일에서 `ENTRYPOINT echo ${greeting} ${name}` 라고 설정을 했기 때문에 `hello 이름` 이 출력되어야 할 것 같으나 name은 ARG로 선언한 값이기 때문에 `hello`만 출력되는 것을 확인할 수 있습니다.  
-![](/assets/img/2022-12-03-how_to_write_dockerfile/arg_is_not_maintained.png)
+![](/assets/img/2022-12/2022-12-03-how_to_write_dockerfile/arg_is_not_maintained.png)
 
 ### USER
 도커 컨테이너가 사용할 기본 사용자를 지정할 때 사용합니다.  
@@ -104,7 +104,7 @@ RUN apt-get update && \
     echo finish!
 ```
 두 이미지 각각을 image:expand와 image:compress 라는 이름으로 빌드했는데 약소하지만 용량에 차이가 생겼음을 확인할 수 있습니다.  
-![](/assets/img/2022-12-03-how_to_write_dockerfile/docker_run_compress.png)
+![](/assets/img/2022-12/2022-12-03-how_to_write_dockerfile/docker_run_compress.png)
 
 또한 패키지 설치 시 이미지에는 cache가 필요하지 않기 때문에 캐시를 남기지 않는 옵션을 추가해주는 것이 좋습니다.  
 
