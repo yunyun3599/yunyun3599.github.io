@@ -1,8 +1,23 @@
+---
+title:  "Docker 이미지 빌드"
+excerpt: "Docker 이미지를 빌드하는 것에 대해 알아봅니다.  "
+
+categories:
+  - Docker
+tags:
+  - [Docker, Devops]
+
+toc: true
+toc_sticky: true
+ 
+date: 2022-12-18
+last_modified_at: 2022-12-18
+---
 # 도커 이미지 빌드  
 
 ## 도커 이미지 구조
 도커 이미지: 레이어 아키텍처  
-새로운 사항이 생기면 새로운 레이어가 위에 쌓이는 구조
+-> 도커 이미지는 새로운 사항이 생기면 새로운 레이어가 위에 쌓이는 구조입니다.
 ![](/assets/img/2022-12/2022-12-02-docker_image_build/docker_image_structure.png)
 
 이미지를 이용해서 컨테이너를 생성하는데, 이미지 레이어에 속해있는 부분은 Read Only이고, 그 위에 쌓이는 컨테이너의 레이어는 Read/Write가 모두 가능합니다.  
@@ -15,8 +30,8 @@ inspect 한 결과에서 Layer 부분을 보면 아래와 같이 각 레이어�
 ![](/assets/img/2022-12/2022-12-02-docker_image_build/image_inspect.png)
 
 ## Dockerfile 없이 이미지 생성
-기존 컨테이너를 기반으로 새 이미지를 생성하는 방법 -> docker commit 이용  
-컨테이너 내부에서 만든 변경사항을 이미지로 저장하는 것
+기존에 작동하고 있던 컨테이너를 기반으로 새 이미지를 생성하는 방법으로는 `docker commit` 명령어를 이용하는 방법이 있습니다.  
+이 명령어를 이용하면 컨테이너 내부에서 만든 변경사항을 이미지로 저장할 수 있습니다.  
 ```sh
 $ docker commit [OPTIONS] [CONTAINER] [REPOSITORY:[:TAG]]
 ```
@@ -33,11 +48,11 @@ $ docker run -ti --name practice_ubuntu ubuntu:focal
 ```sh
 $ cat > practice
 ```
-원하는 내용을 적어주시고 ctrl+c를 눌러 편집을 마칩니다.   
-파일이 생성되었다면 컨테이너를 종료하지 않고 터미널을 나오기 위해 ctrl+p+q를 눌러 컨테이너의 터미널에서 빠져나오도록 합니다.  
+원하는 내용을 적어주시고 `ctrl+c`를 눌러 편집을 마칩니다.   
+파일이 생성되었다면 컨테이너를 종료하지 않고 터미널을 나오기 위해 `ctrl+p+q`를 눌러 컨테이너의 터미널에서 빠져나오도록 합니다.  
 터미널로 나왔다면 앞에서 생성한 컨테이너로 이미지를 만들어보도록 하겠습니다.  
 ```sh
-$ docker commit -a yoonjae -m "Add practice file" practice_ubuntu practice-ubuntu:v1
+$ docker commit -a your_name -m "Add practice file" practice_ubuntu practice-ubuntu:v1
 ```
 
 이미지가 잘 생성되었다면 생성된 이미지를 확인해보도록 하겠습니다.  
@@ -57,7 +72,7 @@ $ docker image inspect -f {{.RootFS.Layers}} ubuntu:focal
 
 
 ## Dockerfile 이용하여 이미지 생성
-Dockerfile의 구조
+Dockerfile의 기본적인 구조는 아래와 같습니다.  
 ```Dockerfile
 FROM [이미지명]
 RUN [명령어]
@@ -65,20 +80,19 @@ WORKDIR [작업 수행 경로]
 CMD ["수행할", "명렁어"]
 ```
 
-도커 파일 기반의 이미지 생성 명령어
+도커 파일을 기반으로 하여 이미지를 생성할 때는 다음 명령어를 사용합니다.  ㅇ
 ```sh
 docker build [OPTIONS] PATH
 ```
 옵션 종류 
 - -t: tag. 빌드한 이미지의 tag를 지정해 줍니다.  
 ` docker build -t my_image:v1 .`
-- -f: file 현재 경로에 있는 Dockerfile 이외에 다른 Dockerfile을 사용하고 싶을 때 사용  
+- -f: file 현재 경로에 있는 Dockerfile 이외에 다른 Dockerfile을 사용하고 싶을 때 사용합니다.   
 `docker build -t my_image:v1 -f another_dir/Dockerfile .`
 
-예시
-간단하게 sh파일 하나를 실행하는 이미지를 만들어보도록 하겠습니다.  
+예시로 간단하게 sh파일 하나를 실행하는 이미지를 만들어보도록 하겠습니다.  
 작업할 디렉토리 생성 후 아래와 같이 Dockerfile을 작성해줍니다.  
-```DOCKERFILE
+```Dockerfile
 FROM ubuntu:latest
 WORKDIR ~/
 COPY example.sh .
