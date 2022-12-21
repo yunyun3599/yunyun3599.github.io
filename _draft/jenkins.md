@@ -111,6 +111,7 @@ $ docker exec -ti jenkins bash -c "cat /var/jenkins_home/secrets/initialAdminPas
     - SSH
     - Publish Over SSH
     - SSH Pipeline Steps
+    - SSH Agent
 
 위의 목록들을 선택하고, install without restart 버튼을 통해 재시작 없이 플러그인들을 설치해줍니다.  
 
