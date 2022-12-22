@@ -3,9 +3,9 @@ title:  "Vue Router 설정"
 excerpt: "Vue에서의 라우팅에 대해 알아보고, 사용해봅니다."
 
 categories:
-  - Vue.js
+  - Vue
 tags:
-  - [Vue.js, Frontend, javascript]
+  - [Vue, Frontend, javascript]
 
 toc: true
 toc_sticky: true

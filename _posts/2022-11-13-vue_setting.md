@@ -3,9 +3,9 @@ title:  "Vue.js 개발환경 세팅"
 excerpt: "Vue.js를 이용힌 개발을 시작하기에 앞서 필요한 환경을 설정합니다. vscode, node, npm을 설치합니다."
 
 categories:
-  - Vue.js
+  - Vue
 tags:
-  - [Vue.js, Frontend, javascript]
+  - [Vue, Frontend, javascript]
 
 toc: true
 toc_sticky: true

@@ -3,9 +3,9 @@ title:  "Vue Component(2)"
 excerpt: "Vue 컴포넌트 내의 각 요소의 사용법을 알아봅니다."
 
 categories:
-  - Vue.js
+  - Vue
 tags:
-  - [Vue.js, Frontend, javascript, component]
+  - [Vue, Frontend, javascript, component]
 
 toc: true
 toc_sticky: true

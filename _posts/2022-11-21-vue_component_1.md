@@ -3,9 +3,9 @@ title:  "Vue Component(1)"
 excerpt: "Vue에서 컴포넌트를 생성하고 각 요소를 어떻게 다루는 지 알아봅니다. "
 
 categories:
-  - Vue.js
+  - Vue
 tags:
-  - [Vue.js, Frontend, javascript, component]
+  - [Vue, Frontend, javascript, component]
 
 toc: true
 toc_sticky: true

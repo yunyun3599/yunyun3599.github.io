@@ -3,9 +3,9 @@ title:  "노트북 외부에서 ssh 연결하기"
 excerpt: "외부에서 집 네트워크에 연결되어있는 노트북에 ssh 연결하는 법에 대해 알아봅니다."
 
 categories:
-  - Etc
+  - Server
 tags:
-  - [Etc]
+  - [Server, Etc]
 
 toc: true
 toc_sticky: true

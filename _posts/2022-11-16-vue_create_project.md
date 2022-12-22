@@ -3,9 +3,9 @@ title:  "Vue 프로젝트 생성"
 excerpt: "Vue 프로젝트를 생성하고, 프로젝트 구조를 확인합니다. "
 
 categories:
-  - Vue.js
+  - Vue
 tags:
-  - [Vue.js, Frontend, javascript]
+  - [Vue, Frontend, javascript]
 
 toc: true
 toc_sticky: true

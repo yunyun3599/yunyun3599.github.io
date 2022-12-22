@@ -3,9 +3,9 @@ title:  "Vue Computed와 Watch"
 excerpt: "vue의 computed와 watch에 대해 알아봅니다."
 
 categories:
-  - Vue.js
+  - Vue
 tags:
-  - [Vue.js, Frontend, javascript, component]
+  - [Vue, Frontend, javascript, component]
 
 toc: true
 toc_sticky: true
