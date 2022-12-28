@@ -1,3 +1,19 @@
+---
+title:  "Docker 원격 리포지토리"
+excerpt: "Docker 이미지를 저장해둘 수 있는 원격 리포지토리에 대해 알아봅니다.  "
+
+categories:
+  - Docker
+tags:
+  - [Docker, Devops]
+
+toc: true
+toc_sticky: true
+ 
+date: 2022-12-28
+last_modified_at: 2022-12-28
+---
+
 # 도커 이미지 저장소
 
 ## 도커 허브
@@ -16,7 +32,7 @@ $ docker login
 ```sh
 $ docker tag local-image:tagname new-repo:tagname
 ```
-예시로 nginx:latest 이미지를 tag 명령어를 이용해 도커허브에 올릴 이미지로 만들어보겠습니다.  
+예시로 tag 명령어를 이용해 nginx:latest 이미지로부터 도커허브에 올릴 이미지를 만들어보겠습니다.  
 ```sh
 $ docker tag nginx:latest yoonjae/my-nginx:v1.0.0
 ```
@@ -40,12 +56,14 @@ AWS 홈페이지에서 Elastic Container Registry로 검색하면 AWS ECR 페이
 
 
 리포지토리를 생성하기 전에 ECR에 대한 과금 정책을 확인해보도록 하겠습니다.  
-![](/assets/img/2022-12/2022-12-04-docker_remote_repository/ecr_billing.png)
+![](/assets/img/2022-12/2022-12-04-docker_remote_repository/ecr_billing.png)  
+
 
 |리포지토리 종류|스토리지|인터넷 전송|
 |---|---|---|
 |프라이빗 리포지토리|월 500MB|수신 무료<br>송신 9.999TB까지 GB당 0.09USD|
-|퍼블릭 리포지토리|월 50GB|익명 전송: 500GB까지 무료<br>AWS 계정으로 전송: 5TB까지 무료|
+|퍼블릭 리포지토리|월 50GB|익명 전송: 500GB까지 무료<br>AWS 계정으로 전송: 5TB까지 무료|  
+
 추가적인 요금 정책은 [이 페이지](https://aws.amazon.com/ko/ecr/pricing/)에서 확인하세요.
 
 리포지토리 페이지에서 리포지토리 생성 버튼을 눌러 리포지토리를 만들어보겠습니다.  
@@ -92,7 +110,7 @@ AdministratorAccess는 full access권한을 부여해주는 정책입니다.
 
 그리고 다시 터미널로 돌아와 아래 명령어를 통해 aws 접근 권한을 설정해줍니다.  
 ```sh
-$ aws configure import --csva file://credentials.csv
+$ aws configure import --csv file://credentials.csv
 ```
 여기서 뒷 부분에는 본인이 csv 파일을 저장한 경로를 적어주면 됩니다.  
 이 때 앞에 file:// 부분을 꼭 적어주셔야합니다.
