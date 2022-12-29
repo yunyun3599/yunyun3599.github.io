@@ -1,3 +1,18 @@
+---
+title:  "Docker Compose"
+excerpt: "Docker compose에 대해 알아보고, 예시 프로젝트를 생성해봅니다."
+
+categories:
+  - Docker
+tags:
+  - [Docker, Devops]
+
+toc: true
+toc_sticky: true
+ 
+date: 2022-12-29
+last_modified_at: 2022-12-29
+---
 # 도커 컴포즈
 
 ## 도커 컴포즈란 
@@ -89,10 +104,13 @@ docker-compose.yml 파일에는 최상위 옵션 4가지가 존재합니다.
 ### 예제 프로젝트 생성
 docker compose 명령어를 알아보기에 앞서 docker-compose로 구성되는 간단한 프로젝트를 하나 생성해보도록 하겠습니다.  
 이 프로젝트에는 redis와 간단한 flask 앱이 포함되어 있습니다.  
+
 작업할 디렉터리 하에 build 디렉터리를 만들고 app.py, docker-compose.yml, Dockerfile, requirements.txt 총 4가지 파일을 생성합니다.  
 ![](/assets/img/2022-12/2022-12-05-docker_compose/docker_compose_file_list.png)
 
 각 파일을 아래와 같이 작성해줍니다.  
+
+\<app.py\>  
 ```python
 import redis
 from flask import Flask
@@ -117,7 +135,8 @@ def hello():
     return f'Hello! I have been seen {count} times.\n'
 ```
 
-docker-compose.yml
+
+\<docker-compose.yml\>
 - 서비스로는 web, redis 2가지가 있으며 web은 밑에서 작성할 Dockerfile을 통해 사용할 이미지를 직접 빌드합니다.  
 ```yaml
 version: "3.9"
@@ -130,7 +149,8 @@ services:
     image: "redis:alpine"
 ```
 
-Dockerfile
+
+\<Dockerfile\>
 ```dockerfile
 FROM python:3.7-alpine
 WORKDIR /code
@@ -144,7 +164,8 @@ COPY . .
 CMD ["flask", "run"]
 ```
 
-requirements.txt
+
+\<requirements.txt\>
 ```
 flask
 redis
@@ -250,7 +271,7 @@ services:
     docker compose top
     ```
 
-## 주요 사용 목적
+## docker compose 주요 사용 목적
 1. 로컬 개발 환경 구성
     - 개발하는 프로젝트가 의존성을 많이 가지고 있는 경우 프로젝트의 의존성을 지키면서 각 서비스들을 띄울 수 있게 됩니다.  
     - 의존도를 만족하는 로컬 개발 환경을 쉽게 구성할 수 있게 됩니다.  
