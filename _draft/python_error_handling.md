@@ -35,3 +35,108 @@
 예외를 사용해서 문제를 처리할 때는 예외가 코드의 어느 부분에 속해야 하는 지도 고려해야합니다.  
 예외는 한 가지 일을 하는 함수의 한 부분입니다.  
 따라서 함수가 발생시키거나 처리하는 예외는 캡슐화된 로직과 일치해야합니다.  
+
+예외가 적당하지 못한 위치에서 처리되는 상황과 적절한 위치에서 처리되는 상황을 예제를 통해 알아보겠습니다.  
+
+### 예외 처리 나쁜 예
+예제로 간단한 티겟팅 상황을 코딩해보도록 하겠습니다.  
+구현할 객체는 결제 수단인 Payment 객체와 티켓팅 로직을 구현하는 Ticketing 객체 두 가지입니다.  
+
+Payment 객체는 잔액 값을 속성으로 가지고 있습니다  
+```python
+class Payment:
+    def __init__(self, balance):
+        self._balance = balance
+
+    @property
+    def balance(self):
+        return self._balance
+
+    @balance.setter
+    def balance(self, balance):
+        self._balance = balance
+```
+
+Ticketing 객체는 좌석표를 가지고 있으며, 좌석 가격을 파라미터로 받아 초기화됩니다.  
+reserve 메서드를 통해 예매를 진행하며, 선택 좌석의 예약 가능 여부를 가져온 뒤에 결제를 진행합니다.  
+이 때 예약 불가능한 좌석을 선택하면 `NotValidSeatException`이 발생하고, 잔액이 부족하면 `NotEnoughBalanceException`이 발생합니다. 
+
+```python
+class Ticketing:
+    def __init__(self, price):
+        self.seat = [[True] * 5 for _ in range(5)]
+        self.price = price
+
+    def reserve(self, row: int, col: int, payment: Payment):
+        try:
+            self.get_seat(row, col)
+            self.pay(payment)
+            print(f"[{row}행 {col}열] 예매가 완료되었습니다. ")
+        except NotValidSeatException:
+            logger.info("예매 불가능한 좌석입니다.")
+            raise
+        except NotEnoughBalanceException:
+            logger.info("잔액이 부족합니다.")
+            raise
+
+    def get_seat(self, row, col):
+        if 0 < row < len(self.seat) and 0 < col < len(self.seat[row]) and self.seat[row][col]:
+            self.seat[row][col] = False
+        else:
+            raise NotValidSeatException
+
+    def pay(self, payment):
+        if payment.balance < self.price:
+            raise NotEnoughBalanceException
+        payment.balance -= self.price
+```
+
+reserve 메서드를 보면 해당 메서드 내에서 `NotValidSeatException`와 `NotEnoughBalanceException`를 모두 처리하고 있습니다.  
+그러나 저 두 메서드는 사실 별로 관계가 없는 적절하지 못한 위치에서 처리되고 있습니다.  
+
+따라서 각 예외가 발생하는 위치를 조금 더 책임이 명확한 곳으로 옮길 필요가 있습니다.  
+
+### 예외 처리 좋은 예
+각 예외를 적합한 위치에서 발생시키기 위해 위와 동일한 기능을 하는 코드를 조금 수정해보도록 하겠습니다.  
+좌석과 관련된 Seat 객체, 결제와 관련된 Payment 객체, 티켓팅을 수행하는 Ticketing 객체를 생성하도록 하겠습니다.  
+앞에서는 예외를 모두 Ticketing 객체에서 발생시켰지만, 이번 예제에서는 `NotValidSeatException` 예외는 Seat 객체에서 발생시키고, `NotEnoughBalanceException`객체는 Payment 객체에서 발생시키도록 하겠습니다.  
+
+Seat 객체 코드는 아래와 같습니다.  
+```python
+class Seat:
+    def __init__(self):
+        self.seat = [[True] * 5 for _ in range(5)]
+
+    def get_seat(self, row, col):
+        if 0 < row < len(self.seat) and 0 < col < len(self.seat[row]) and self.seat[row][col]:
+            self.seat[row][col] = False
+        else:
+            logger.info("예매 불가능한 좌석입니다.")
+            raise NotValidSeatException
+```
+
+Payment 객체 코드는 아래와 같습니다.  
+```python
+class Payment:
+    def __init__(self, balance):
+        self._balance = balance
+
+    def pay(self, price):
+        if self._balance >= price:
+            self._balance -= price
+        else:
+            logger.info("잔액이 부족합니다.")
+            raise NotEnoughBalanceException
+```
+
+Ticketing 객체 코드는 아래와 같습니다.  
+```python
+class Ticketing:
+    def __init__(self, price):
+        self.seat = Seat()
+        self.price = price
+
+    def reserve(self, row, col, payment):
+        self.seat.get_seat(row, col)
+        payment.pay(self.price)
+```
