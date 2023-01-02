@@ -1,3 +1,18 @@
+---
+title:  "Jenkins를 사용한 CI/CD"
+excerpt: "Jenkins를 이용해 스프링 프로젝트애 CI/CD를 적용해봅니다."
+
+categories:
+  - Devops
+tags:
+  - [Devops, Jenkins]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-01-02
+last_modified_at: 2023-01-02
+---
 # Jenkins
 젠킨스는 소프트웨어 개발 시 CI(continuous integration, 지속적 통합) 서비스를 제공하는 도구입니다.  
 

@@ -1,4 +1,20 @@
+---
+title:  "Jenkins를 사용한 CI/CD (1)"
+excerpt: "Jenkins를 이용해 CI/CD를 적용하기 위해 서버 환경을 구축합니다."
+
+categories:
+  - Devops
+tags:
+  - [Devops, Jenkins]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-01-02
+last_modified_at: 2023-01-02
+---
 # CI/CD를 위한 서버 환경 세팅
+*아래의 모든 설정들은 ubuntu 환경을 기반으로 진행하였습니다.*  
 
 ## 패키지 설치
 ### apt 
@@ -95,13 +111,13 @@ $ sudo apt -y install gradle
 ```
 
 ### gradle 프로젝트 생성 및 빌드
-gradle을 이용한 springboot 프로젝트 생성 명령
+gradle을 이용한 springboot 프로젝트 생성하기 위한 명령어는 다음과 같습니다.  
 ```sh
-gradle init --dsl=groovy --type=java-application --test-framework=junit --package=com.test --project-name=test-docker-spring-boot
+$ gradle init --dsl=groovy --type=java-application --test-framework=junit --package=com.test --project-name=test-docker-spring-boot
 ```
 
-gradle 빌드 명령어
+gradle 빌드 명령어는 아래와 같습니다.  
 ```sh
-gradle build --info
+$ gradle build --info
 ```
 빌드 명령의 결과로 생성되는 jar파일은 `프로젝트디렉터리/app/build/libs` 디렉터리 하에 있습니다. 
