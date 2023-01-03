@@ -1,5 +1,5 @@
 ---
-title:  "Jenkins를 사용한 CI/CD"
+title:  "Jenkins를 사용한 CI/CD (2)"
 excerpt: "Jenkins를 이용해 스프링 프로젝트애 CI/CD를 적용해봅니다."
 
 categories:
@@ -10,8 +10,8 @@ tags:
 toc: true
 toc_sticky: true
  
-date: 2023-01-02
-last_modified_at: 2023-01-02
+date: 2023-01-03
+last_modified_at: 2023-01-03
 ---
 # Jenkins
 젠킨스는 소프트웨어 개발 시 CI(continuous integration, 지속적 통합) 서비스를 제공하는 도구입니다.  
@@ -57,7 +57,7 @@ ssh-key.pub는 public 키로, github에 등록을 하게 됩니다.
 저는 집에서 놀고 있는 노트북에 ubuntu를 깔아 진행하였습니다.  
 만약 적당한 노트북이 없거나, 설정이 귀찮다면 aws에서 ec2 서버를 발급받아 사용하는 것을 추천합니다.  
 
-집에 있는 노트북을 외부에서 접근 가능하도록 하기 위해 진행한 설정들은 [이 포스팅](https://yunyun3599.github.io/etc/connect_remote_server/)에서 확인할 수 있습니다.   
+집에 있는 노트북을 외부에서 접근 가능하도록 하기 위해 진행한 설정들은 [이 포스팅](https://yunyun3599.github.io/server/connect_remote_server/)에서 확인할 수 있습니다.   
 
 ### 서버 도커 설정
 서버에 도커를 깔아야 하므로 아래 명령어를 하나씩 수행해 줍니다.  
