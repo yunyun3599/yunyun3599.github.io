@@ -1,3 +1,18 @@
+---
+title:  "파이썬의 에러 핸들링"
+excerpt: "파이썬에서 적절하게 에러를 처리하는 방법에 대해 알아봅니다."
+
+categories:
+  - Python
+tags:
+  - [Python, CleanCode]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-01-05
+last_modified_at: 2023-01-05
+---
 # 파이썬에서의 에러 핸들링
 파이썬에서 발생한 에러를 처리하기 위해서 몇 가지 방법을 사용할 수 있습니다.  
 이번 포스팅에서는 살펴볼 방법은 다음 두 가지 입니다.  
@@ -42,7 +57,7 @@
 예제로 간단한 티겟팅 상황을 코딩해보도록 하겠습니다.  
 구현할 객체는 결제 수단인 Payment 객체와 티켓팅 로직을 구현하는 Ticketing 객체 두 가지입니다.  
 
-Payment 객체는 잔액 값을 속성으로 가지고 있습니다  
+**Payment** 객체는 잔액 값을 속성으로 가지고 있습니다  
 ```python
 class Payment:
     def __init__(self, balance):
@@ -57,7 +72,7 @@ class Payment:
         self._balance = balance
 ```
 
-Ticketing 객체는 좌석표를 가지고 있으며, 좌석 가격을 파라미터로 받아 초기화됩니다.  
+**Ticketing** 객체는 좌석표를 가지고 있으며, 좌석 가격을 파라미터로 받아 초기화됩니다.  
 reserve 메서드를 통해 예매를 진행하며, 선택 좌석의 예약 가능 여부를 가져온 뒤에 결제를 진행합니다.  
 이 때 예약 불가능한 좌석을 선택하면 `NotValidSeatException`이 발생하고, 잔액이 부족하면 `NotEnoughBalanceException`이 발생합니다. 
 
@@ -140,3 +155,35 @@ class Ticketing:
         self.seat.get_seat(row, col)
         payment.pay(self.price)
 ```
+
+이처럼 각 오류를 적합한 곳에서 발생시키는 것이 에러를 핸들링하는 더 나은 방법입니다.  
+
+## 원본 예외 포함
+오류 처리 중에 발생한 오류 대신 다른 오류를 발생시키며 메시지를 변경하고 싶을 수 있습니다.  
+이 경우에는 원래 발생했던 예외를 포함하는 것이 좋습니다.  
+
+원본 예외를 포함하려면 아래와 같은 구문을 사용하면 됩니다.  
+```python
+raise <new exception> from <original exception>
+```
+이 구문을 사용하면 원본 예외가 새로운 예외의 traceback에 포함됩니다.  
+
+위 예제의 Seat 객체를 조금 변형해 원본 예외를 포함하도록 예외를 발생시켜보도록 하겠습니다.  
+제공되는 좌석 범위 외의 좌석을 선택하려고 하면 seat 정보를 저장하는 배열에서 IndexError가 발생하게 되는데요, 이 에러를 받아 새로운 에러를 발생시키나 원본 예외를 포함하여 발생시키도록 하겠습니다.  
+```py
+class Seat:
+    def __init__(self):
+        self.seat = [[True] * 5 for _ in range(5)]
+
+    def get_seat(self, row, col):
+        try:
+            if not self.seat[row][col]:
+                raise AlreadyOccupiedSeatException("이미 선택된 좌석입니다.")
+            self.seat[row][col] = False
+            print(f"{row}행 {col}열 좌석 선택 완료")
+        except IndexError as e:
+            raise WrongSeatNumberException("좌석 번호 오류") from e
+```
+
+위와 같이 에러를 발생시키면 최종적으로 발생한 예외는 `WrongSeatNumberException`이지만 해당 예외를 raise할 때 from에 `IndexError`를 주었기 때문에 원본 예외가 포함됩니다.   
+![](/assets/img/2023/01/include_original_exception.png)
