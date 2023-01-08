@@ -186,4 +186,4 @@ class Seat:
 ```
 
 위와 같이 에러를 발생시키면 최종적으로 발생한 예외는 `WrongSeatNumberException`이지만 해당 예외를 raise할 때 from에 `IndexError`를 주었기 때문에 원본 예외가 포함됩니다.   
-![](/assets/img/2023/01/include_original_exception.png)
+![](/assets/img/2023/01/2023-01-05-python_error_handling/include_original_exception.png)
