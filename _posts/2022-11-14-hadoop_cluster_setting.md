@@ -109,7 +109,7 @@ $ tar xvfz hadoop-3.3.4.tar.gz
 ```
 설치 후에는 hadoop-3.3.4 디렉토리에 대한 심볼릭 링크를 생성합니다. 
 ```shell
-$ ln -s hadoop-3.4.3 hadoop
+$ ln -s hadoop-3.3.4 hadoop
 ```
 
 설치가 완료됐다면 아래와 같이 ~/.bashrc 파일에 내용을 추가하여 환경변수 설정을 해줍니다.  
