@@ -1,3 +1,19 @@
+---
+title:  "서버에서 데이터를 받아와 Vue에서 사용하기"
+excerpt: "api 호출을 통해 외부 서버에서 데이터를 받아와 vue에서 사용하는 방법에 대해 알아봅니다."
+
+categories:
+  - Vue
+tags:
+  - [Vue, Frontend, javascript, component]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-01-18
+last_modified_at: 2023-01-18
+---
+
 # 데이터 바인딩
 ## Axios
 Axios는 서버와 데이터를 송수신할 수 있는 HTTP 비동기 통신 라이브러리입니다.  
