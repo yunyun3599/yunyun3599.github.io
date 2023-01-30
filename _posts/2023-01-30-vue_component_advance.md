@@ -1,7 +1,22 @@
+---
+title:  "vue component 사용하기(1)"
+excerpt: "vue에서 컴포넌트를 사용할 수 있도록 props에 대해 알아봅니다."
+
+categories:
+  - Vue
+tags:
+  - [Vue, Frontend, javascript, component]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-01-30
+last_modified_at: 2023-01-30
+---
 # Vue Component
 
 ## 컴포넌트 내에 다른 컴포넌트 사용하기  
-vue를 통해 작업할 떄 컴포넌트 내에서 다른 컴포넌트를 import하여 재사용할 수 있습니다.  
+vue를 통해 작업할 때 컴포넌트 내에서 다른 컴포넌트를 import하여 재사용할 수 있습니다.  
 다른 컴포넌트를 import해 사용하는 코드는 다음과 같습니다.  
 ```vue
 <template>
