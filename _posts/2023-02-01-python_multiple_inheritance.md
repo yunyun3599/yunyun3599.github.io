@@ -1,3 +1,18 @@
+---
+title:  "파이썬의 다중 상속"
+excerpt: "파이썬에서 사용되는 다중 상속 관련 내용과 믹스인에 대해 알아봅니다. "
+
+categories:
+  - Python
+tags:
+  - [Python, CleanCode]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-02-01
+last_modified_at: 2023-02-01
+---
 # 파이썬 다중 상속과 믹스인
 
 ## 파이썬 다중 상속
