@@ -1,4 +1,19 @@
-# 부모 컴포넌트와 자식 컴포넌트 간의 이벤트, 함수, 데이터 값 사용
+---
+title:  "vue component 사용하기(2)"
+excerpt: "부모 컴포넌트와 자식 컴포넌트 간의 이벤트 전달, 함수 사용, 데이터 값 사용에 대해 알아봅니다."
+
+categories:
+  - Vue
+tags:
+  - [Vue, Frontend, javascript, component]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-02-21
+last_modified_at: 2023-02-21
+---
+# 컴포넌트 간의 이벤트, 함수, 데이터 값 사용
 
 ## 부모 -> 자식 컴포넌트 이벤트 트리거
 부모 컴포넌트에서 자식 컴포넌트를 import하여 사용할 때는 `ref`로 자식 컴포넌트의 아이디를 지정하여 자식 컴포넌트의 각종 요소에 접근할 수 있습니다.  
