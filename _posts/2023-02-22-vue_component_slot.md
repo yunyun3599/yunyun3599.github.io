@@ -1,3 +1,18 @@
+---
+title:  "vue component 사용하기(3)"
+excerpt: "vue component의 slot이 무엇인지와, provide와 inject를 통해 컴포넌트 간의 데이터 전달을 쉽게 하는 방법을 알아봅니다."
+
+categories:
+  - Vue
+tags:
+  - [Vue, Frontend, javascript, component]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-02-22
+last_modified_at: 2023-02-22
+---
 # Vue 컴포넌트 - Slot, Provide/Inject
 
 ## Vue 컴포넌트 재사용 - Slot
@@ -145,6 +160,7 @@ PrarentComponent에서 GrandChildComponent로 props를 이용해 데이터를 �
 여기에서는 `ProvideInjectGrandchild` 컴포넌트를 호출할 뿐 따로 데이터를 넘긴다거나 하고있지 않습니다.  
 
 마지막으로 `ProvideInjectGrandchild` 컴포넌트 코드입니다.  
+{% raw %}
 ```vue
 <template>
     <div style="border: 1px solid black">
@@ -160,6 +176,7 @@ PrarentComponent에서 GrandChildComponent로 props를 이용해 데이터를 �
 </script>
 ```
 `inject: ['itemLength', 'items']` 부분을 통해 사용할 데이터를 받아오고 있습니다.  
+{% endraw %}
 
 위에서 작성한 코드를 통해 아래 화면과 같은 결과를 볼 수 있습니다.  
 ![](/assets/img/2023/01/2023-01-21-vue_slot/provide_inject_result.png)
