@@ -42,6 +42,9 @@
                     {% if category[0] == "Docker" %}
                         <li><a href="/categories/docker" class="">Docker ({{category[1].size}})</a></li>
                     {% endif %}
+                    {% if category[0] == "Kubernetes" %}
+                        <li><a href="/categories/kubernetes" class="">Kubernetes ({{category[1].size}})</a></li>
+                    {% endif %}
                     {% if category[0] == "Devops" %}
                         <li><a href="/categories/devops" class="">Devops ({{category[1].size}})</a></li>
                     {% endif %}
