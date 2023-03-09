@@ -1,6 +1,6 @@
 ---
 title:  "Docker 로그"
-excerpt: "Docker에서 마운트할 수 있는 볼륨의 종류에 대해 알아봅니다. "
+excerpt: "Docker에서 컨테이너의 로그를 어떻게 확인하고 활용할 수 있는 지 알아봅니다.  "
 
 categories:
   - Docker
