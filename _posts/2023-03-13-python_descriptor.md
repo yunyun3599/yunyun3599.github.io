@@ -1,3 +1,18 @@
+---
+title:  "파이썬 디스크립터(1)"
+excerpt: "파이썬 디스크립터가 무엇인지 알아보고, 구현해야 하는 매직 메서드에 대해 알아봅니다. "
+
+categories:
+  - Python
+tags:
+  - [Python, CleanCode]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-03-13
+last_modified_at: 2023-03-13
+---
 # 파이썬 디스크립터
 
 디스크립터는 파이썬의 기능 중 하나로 다음 4가지 매직 메서드 중 최소 한 개 이상을 구현한 클래스를 의미합니다.  
