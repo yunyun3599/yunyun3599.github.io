@@ -1,3 +1,18 @@
+---
+title:  "Kubernetes 클러스터 실습"
+excerpt: "GCP를 이용하여 쿠버네티스 클러스터를 생성해보는 실습을 진행합니다.  "
+
+categories:
+  - Kubernetes
+tags:
+  - [Kubernetes, Devops]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-03-23
+last_modified_at: 2023-03-23
+---
 # 쿠버네티스 클러스터 생성 및 실습 (w. GCP)
 
 ## GCP 활용하기
@@ -49,7 +64,8 @@ Autopilot 모드는 구글에서 클러스터 관리를 도와주는 것을 포�
 그러면 아래와 같은 팝업이 뜨게됩니다.  
 ![](/assets/img/2023/02/2023-02-23-kubernetes-cluster-setting/cluster_connection_info_popup.png)
 이 팝업에는 gcloud를 통해 클라우드 정보를 구성할 수 있는 명령어가 아래처럼 명시되어 있습니다.   
-> gcloud container clusters get-credentials [클러스터 이름] --zone [리전] --project [프로젝트]
+> gcloud container clusters get-credentials [클러스터 이름] --zone [리전] --project [프로젝트]  
+
 이 명령어를 잘 복사해두도록 합니다.  
 그 다음으로는 `CLOUD SHELL에서 실행`버튼을 눌러줍니다.  
 
