@@ -1,3 +1,18 @@
+---
+title:  "파이썬 제너레이터(1)"
+excerpt: "파이썬 제너레이터가 무엇인지 알아보고 파이썬에서 반복을 구현하는 여러 방식에 대해 알아봅니다."
+
+categories:
+  - Python
+tags:
+  - [Python, CleanCode]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-04-04
+last_modified_at: 2023-04-04
+---
 # 파이썬 제너레이터와 반복  
 
 ## 제너레이터
@@ -25,7 +40,7 @@
 
 ## 제너레이터 사용 예제
 다음은 제너레이터를 이용해 반복을 실행하는 예제입니다.  
-아래 예제는 `사원id,연봉`의 정보를 가지고 있는 csv파일을 읽어 최고 연봉값, 최저 연봉값, 연봉 평균을 구하는 예제입니다.  
+아래 예제는 `사원id, 연봉`의 정보를 가지고 있는 csv파일을 읽어 최고 연봉값, 최저 연봉값, 연봉 평균을 구하는 예제입니다.  
 
 먼저 iterable한 값인 salary_list를 받아 요소를 하나씩 확인하며 최고연봉, 최저연봉, 연봉 평균을 갱신하는 `SalaryCalculator` 객체를 만들어보도록 하겠습니다.  
 참고로 `SalaryCalculator` 객체는 salary_list 내의 값 중 최고, 최소, 평균값을 구하는 역할만 하며 제너레이터는 salary_list를 생성하는 함수에서 구현할 것입니다.  
@@ -97,7 +112,7 @@ print("salary_generator_calculator.avg_salary", salary_generator_calculator.avg_
 이 구문을 사용하기 위해서 `iterable` 자리에 오는 객체는 `__iter__` 메서드를 구현해 반복 가능해야합니다.  
 또한 `__next__` 메서드를 구현하면 객체는 이터레이터가 됩니다.  
 
-먼저 무한 시퀀스를 만드는 이터레이터가 아닌 코드를 살펴보도록 하겠습니다.  
+먼저 무한 시퀀스를 만드는 이터러블하지 않은 코드를 살펴보도록 하겠습니다.  
 아래 코드는 초기깂과 한 번에 얼마씩 값을 증가시킬지에 대한 값을 받습니다.  
 그리고 계속해서 점점 커진 값을 반환합니다.  
 ```py
@@ -280,5 +295,5 @@ print("max(generator):", max(generator))  # max(generator): 9
 print("max(lst):", max(lst))              # max(lst): 9
 print("max(generator):", max(generator))  # ValueError: max() arg is an empty sequence -> 재사용 불가
 ```
-tee를 이용해 반환된 값들도 한 번 사용하면 다시 사용이 불가능할 뿐 아니라, `a, b = itertools.tee(iterable, 2)` 식으로 생성된 후 iterable이 사용되면 a, b 값에 대한 이터러블도 실행될 수 있으므로 주의해야합니다.  
+tee를 이용해 반환된 값들도 한 번 사용하면 다시 사용이 불가능할 뿐 아니라, `a, b = itertools.tee(iterable, 2)` 식으로 생성된 후 `iterable`이 사용되면 a, b 값에 대한 이터러블도 실행될 수 있으므로 주의해야합니다.  
 
