@@ -24,7 +24,7 @@ Pod 마다 부여된 유일한 IP는 클러스터 안에서만 접근 가능합�
 ![](/assets/img/2023/03/2023-03-04-kubernetes_pod/pod_networking.png)  
 
 위의 그림처럼 클러스터 내부에서는 pod ip를 통해 서로 통신할 수 있지만, 외부에서는 pod ip를 가지고 트래픽을 전송할 수 없습니다  
-참고로 말하자면, 외부의 트래픽을 받기 위해서는 Service나 Ingressr 같은 다른 쿠퍼네티스 오브젝트의 도움이 필요합니다.  
+참고로 말하자면, 외부의 트래픽을 받기 위해서는 Service나 Ingressor 같은 다른 쿠퍼네티스 오브젝트의 도움이 필요합니다.  
 
 
 ## Pod 스케일 아웃, Container 설계
