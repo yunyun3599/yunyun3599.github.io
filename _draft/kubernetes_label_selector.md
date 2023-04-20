@@ -243,3 +243,56 @@ $ kubectl get pod --selector 'legs notin (four)'
 $ kubectl delete pod --selector 'group'
 ```
 ![](/assets/img/2023/04/2023-04-15-kubernetes_label_selector/kubectl_delete_pod_with_selector.png)
+
+
+## nodeSelector로 선택한 특정 노드 집합에 Pod 배포  
+nodeSelector라는 속성을 pod에 추가하여 특정 label을 갖는 노드에만 pod를 배포하는 방법에 대해 알아보도록 하겠습니다.  
+
+### 특정 노드에 pod를 배포하기 위한 정의 사항 
+원하는 node를 골라 해당 node에 pod를 배포하기 위해서는 배포 시점에 아래와 같은 설정을 해주어야 합니다.  
+1. 노드에 Label 추가: 노드를 Selector로 선택하기 위해 Label 값이 필요합니다.
+2. Pod yaml 파일에 spec.nodeSelector를 선언: 쿠버네티스가 Pod를 생성할 때 nodeSelector를 보고 pod를 배포할 노드를 선택합니다.
+
+위와 같은 설정이 되어있으면, Pod를 배포할 때 `scheduler`가 선언된 nodeSelector 정보를 이용해 node를 선택합니다.  
+
+이러한 점을 참고하여 특정 노드에만 pod을 배포해보기 위해 `dog-app` 이라는 pod를 `env: animal`이라는 레이블을 가진 node에만 배포해보도록 하겠습니다.  
+
+#### 노드 목록 조회 및 노드에 Label 추가  
+노드 목록 조회 명령어는 다음과 같습니다.  
+```sh
+$ kubectl get node
+```
+![](/assets/img/2023/04/2023-04-21-kubernetes_deploy_pod_with_nodeSelector/kubect_get_node.png)
+
+조회된 node에 label을 추가하는 명령어는 다음과 같습니다.  
+```sh
+# kubectl label node <노드 Name> <label_key=label_value>
+$ kubectl label node gke-my-cluster-default-pool-18f2f739-7h0n env=animal
+```
+![](/assets/img/2023/04/2023-04-21-kubernetes_deploy_pod_with_nodeSelector/kubectl_label_node.png) . 
+
+node에 label이 잘 생성되었는 지 확인해보도록 하겠습니다.  
+```sh
+$ kubectl get node -L env
+```
+![](/assets/img/2023/04/2023-04-21-kubernetes_deploy_pod_with_nodeSelector/kubect_get_node_-L_env.png)
+
+#### Pod 배포  
+다음으로는 dog-app pod를 배포하도록 하겠습니다.   
+pod는 yaml파일을 작성해서 `kubectl apply -f <파일명>` 명령어를 통해 배포할 수도 있지만 다음 명령어로 간단하게 배포할 수도 있습니다.  
+```sh
+$ kubectl run <pod name> --image <image name>
+```
+
+위의 명령어를 이용하여 `env=animal` 레이블을 가진 모든 노드에 pod을 배포하기 위해 아래 명령어를 사용합니다.  
+```sh
+$ kubectl run dog-app-1 \
+  --labels="species=dog" \
+  --image=ubuntu:14.04 \
+  --overrides='{"spec":{"nodeSelector":{"env":"animal"}}}'   # 원하는 spec을 json 형태로 표현 가능
+```
+
+같은 방법으로 dog-app-1 ~ dog-app-5 까지 생성 후에 `kubectl get pod -o wide`로 pod 목록을 확인해보도록 하겠습니다.  
+![](/assets/img/2023/04/2023-04-21-kubernetes_deploy_pod_with_nodeSelector/kubect_get_pod_-o_wide.png)
+
+`env=animal`인 node 2개에만 pod가 배포되고 있음을 확인할 수 있습니다.  
