@@ -1,3 +1,18 @@
+---
+title:  "Kubernetes Pod"
+excerpt: "kubernetes의 pod에 대한 개념을 정리합니다.."
+
+categories:
+  - Kubernetes
+tags:
+  - [Kubernetes, Devops]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-05-19
+last_modified_at: 2023-05-19
+---
 # 쿠버네티스 Pod
 
 ## Pod이란?
