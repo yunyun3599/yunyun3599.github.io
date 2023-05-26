@@ -83,3 +83,67 @@ if __name__ == "__main__":
 `ErrorAlertClient`가 만약 외부 라이브러리라 직접 제어가 불가능한 상황이라면 더더욱 이러한 인터페이스 규약을 맞춰주어야 합니다.  
 이러한 부분은 단위테스트를 통해 점검하고 문제 여부를 확인할 수 있습니다.  
 
+테스트 방법으로는 
+1. Process 객체의 client를 Mock 객체로 대체하여 테스트 하기
+2. 필요한 부분만 테스트하기 위해 wrapper 메서드에 위임하여 client를 간접적으로 다루기  
+두 가지를 시도해볼 수 있습니다.  
+
+첫번째 방법을 이용하는 경우에는 테스트를 위해 더 많은 코드를 사용해야합니다.  
+위의 예제에서는 메서드가 작기 때문에 부작용이 덜하지만 만약 메서드가 크다면 모의 과정에서 불필요한 것들을 더 많이 실행해야하기 때문에 테스트를 하기 어려워집니다.  
+테스트를 위한 좋은 코드들은 메서드들이 작고 응집력이 높게 설계된 코드입니다.  
+
+두번째 방법을 이용하여 Wrapper 객체를 만든 후 테스트를 수행하는 코드를 살펴보도록 하겠습니다.  
+```py
+import random
+import unittest
+from unittest.mock import Mock
+
+
+class WrappedClient:
+    def __init__(self):
+        self.client = ErrorAlertClient()
+
+    def send(self, error_channel, error_msg):
+        return self.client.send(str(error_channel), str(error_msg))
+
+"""
+ErrorAlertClient 클래스 상동
+"""
+
+class Process:
+    def __init__(self):
+        self.client = WrappedClient()
+        self.channel = "channel_1"
+    """
+    나머지 코드 상동
+    """
+
+class TestWrappedClient(unittest.TestCase):
+    def test_send_converts_types(self):
+        wrapped_client = WrappedClient()
+        wrapped_client.client = Mock()
+        wrapped_client.send("value", 1)
+        wrapped_client.client.send.assert_called_with("value", "1")
+
+```
+위의 코드에서는 `ErrorAlertClient` 객체를 직접 사용하지 않고 Wrapper 클래스를 client로 사용하였습니다.  
+이 때 Wrapper 클래스는 `ErrorAlertClient` 클래스와 동일한 인터페이스를 가지고 있습니다.  
+
+이러한 방식은 메인 코드 대신 Wrapper 클래스를 이용해 단위 테스트를 진행함으로써 더 간단한 테스트를 가능하게 해줍니다.  
+만약 메인코드에 직접 단위 테스트를 작성한다면 가장 중요한 속성 중 하나인 추상화를 하지 못하게 되므로 위와 같은 방식을 지향하는 것이 더 바람직합니다.  
+
+또한 테스트를 위해 unittest 모듈의 Mock을 활용하였는데 Mock은 어떤 종류의 타입에도 사용할 수 있는 객체입니다.  
+만약 확인하고 싶은 메인 코드 대신 Mock 객체를 이용하면 앞의 코드와 같이 메인 로직으로의 호출이 예상대로 동작하는 지 확인할 수 있습니다.  
+
+
+## 테스트의 경계 정하기  
+사용한 모든 코드에 대해 테스트를 하는 것은 끝이 없을 뿐더러 유의미한 결과를 얻기도 어렵습니다.  
+따라서 테스트를 할 범위를 정하는 것도 중요한 일인데요, 기본적으로 테스트를 할 부분은 본인이 작성한 코드로 범위를 한정해야 합니다.  
+만약 외부 라이브러리나 모듈 등의 의존성까지 확인해야한다면 너무 많은 의존성들을 확인해야하고, 테스트 범위는 끝없이 늘어나게 되기 떄문입니다.  
+따라서 외부 라이브러리의 경우 자체적인 테스트가 있다고 가정하고 올바른 파라미터를 사용하면 정상적으로 실행된다는 것을 확인하는 수준으로도 충분합니다.  
+
+또한 테스트의 경계를 명확히 할 수 있다는 것은 시스템의 기준이 명확히했다는 의미가 됩니다.  
+이는 인터페이스를 사용해 외부 컴포넌트와의 결합력을 낮추고 의존성을 역전시킴으로써 좋은 코드를 디자인했음을 시사합니다.  
+
+잘 작성된 단위 테스트는 시스템의 경계에는 패치를 적용해 넘어가고 핵심 기능에 초점을 맞춥니다.  
+외부 라이브러리나 모듈을 테스트하지는 않지만 제대로 호출되었는지 여부는 확인하고, 이러한 확인은 mock 객체와 assertion을 수행하기 위한 도구들을 이용하여 이루어집니다.  
