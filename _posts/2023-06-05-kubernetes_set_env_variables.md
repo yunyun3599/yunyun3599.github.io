@@ -1,3 +1,18 @@
+---
+title:  "Kubernetes 환경 변수 설정"
+excerpt: "kubernetes의 pod에 환경 변수를 설정하는 방법에 대해 알아봅니다."
+
+categories:
+  - Kubernetes
+tags:
+  - [Kubernetes, Devops]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-06-05
+last_modified_at: 2023-06-05
+---
 # Pod - 컨테이너로 환경변수 전달
 
 이번 포스트에서는 kubernetes를 통해 pod를 띄울 때 pod 내의 컨테이너에 환경변수를 설정하는 방법에 대해 알아봅니다.   
@@ -198,7 +213,7 @@ $ kubectl port-forward hello-app 8080:8080
 
 컨테이너에서 띄운 서비스에서 미리 요청이 온다면 세팅한 환경변수를 포함하여 응답을 주도록 정의해두었기 때문에, 앞서 설정한 환경변수들이 포함된 리스폰스가 잘 오는 것을 확인할 수 있습니다.  
 
-지금까지 생성한 리소스들을 삭제함으로써 더이상 쓰지 않는 오브젝트르를 제거하기 위해서는 아래 명령어를 사용할 수 있습니다.  
+지금까지 생성한 리소스들을 삭제함으로써 더이상 쓰지 않는 pod를 제거하기 위해서는 아래 명령어를 사용할 수 있습니다.  
 ```sh
 $ kubectl delete pod --all      # kubernetes 클러스터상의 모든 pod를 삭제
 $ kubectl delete pod hello-app  # hello-app pod를 삭제
