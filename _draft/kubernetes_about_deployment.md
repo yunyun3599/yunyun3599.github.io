@@ -1,0 +1,164 @@
+# 쿠버네티스 Deployment
+
+## ReplicaSet과의 비교
+이전 포스트들에서 ReplicaSet을 통해 Pod를 배포하는 방식에 대해 알아보았습니다.  
+ReplicaSet을 이용해서 Pod를 배포하면 다음과 같은 이점이 있습니다.  
+1. ReplicaSet의 Pod 복제 기능을 통해 여러개의 Pod를 한 번에 실행할 수 있습니다.  
+2. 선언한 replicas 수만큼 Pod의 실행을 보장합니다.  
+3. ReplicaSet이 Pod 상태를 항상 감시합니다.  
+4. Pod 실행 중에도 replicas 조정이 자유롭습니다.  
+
+ReplicaSet을 통해 pod를 배포하면 pod에 문제가 있어 이전 버전으로 롤백을 하려고 하면 아래 과정을 거쳐야합니다.  
+1. 새로운 ReplicaSet을 만들어 Pod 재배포하거나 Pod Template을 변경 후 적용
+2. 사용하지 않는 ReplicaSet과 Pod를 제거
+3. 롤백 or 새 버전 배포 시마다 위의 과정을 반복
+
+따라서 ReplicaSet을 통해 신규 버전을 배포하거나 이전 버전으로의 롤백을 진행하려고 한다면 관리자가 직접 새로운 ReplicaSet의 배포 및 이전 ReplicaSet과 Pod를 삭제해주는 작업을 진행해야합니다.  
+그렇다면 이런 과정을 쿠버네티스에 위임하는 방법은 없을까요?  
+쿠버네티스에서는 더 간편한 배포를 위해 Deployment라는 오브젝트를 제공하고 있습니다.  
+
+Pod 배포 시에 필수적으로 정의해야 하는 값들은 아래와 같습니다.  
+- selector: 어떤 Pod 집합을 대상으로 Replication 해야하는 지
+- replicas: Pod를 몇 개나 생성할 지
+- Pod Template Image: Pod에서 어떤 컨테이너를 실행할지
+
+신규 배포를 진행하거나 롤백 할 때 바뀌는 부분은 Pod Template Image로, 기존에 ReplicaSet을 이용할 때는 변경된 이미지가 반영된 Pod를 띄우기 위해 직접 Pod 신규 배포와 이전 Pod 삭제롤 관리했습니다.   
+이에 대해 만약 쿠버네티스가 알아서 ReplicaSet을 생성하고 이전 Pod를 제거해주는 기능을 제공받는다면 더 편한 배포가 가능할 것이고, 이러한 기능을 제공해 주는 것이 바로 Deployment 입니다.  
+
+
+## Deployment 개념과 특징
+Deployment는 Pod 배포 자동화를 위한 오브젝트로 `ReplicaSet 오브젝트`에 `배포 전략`이 추가된 오브젝트라고 볼 수 있습니다.  
+
+Deployment가 수행해주는 주요 역할은 아래와 같습니다.  
+- 새로운 Pod를 롤아웃/롤백할 때 ReplicaSet 생성을 대신해줍니다.  
+- 다양한 배포 전략을 제공하고 이전 파드에서 새로운 파드로의 전환 속도를 제어할 수 있습니다.  
+
+Deployment가 제공해 주는 기능은 ReplicaSet을 통해 pod를 배포했을 때 겪는 어려운 부분들을 보완해주므로 Pod를 배포할 떄 ReplicaSet이 아닌 Deployment를 사용해 배포하면 Pod를 더 손쉽게 관리할 수 있습니다.  
+
+Deployment 오브젝트를 생성할 때도 ReplicaSet과 유사한 항목들을 정의해야하는데요, 주요 항목을 꼽아보면 아래와 같습니다.  
+- Replicas
+- Pod Selector
+- Pod Template
+
+### Deployment 생성 명세
+Deployment 오브젝트를 배포할 떄 작성해야하는 yml 파일의 기본 구조에 대해 알아보도록 하겠습니다.  
+yml 파일의 주요 항목을 살펴보면 다음과 같은 형태를 갖습니다.  
+```yml
+apiVersion: apps/v1   # kubernetes API 버전
+kind: Deployment      # 오브젝트 타입
+metadata:             # 오브젝트 식별을 위한 정보
+  name: my-app        # 오브젝트 이름
+spec:                 # 배포하려는 Pod 정보
+  selector:           # ReplicaSet을 통해 관리할 Pod를 선택하기 위한 Label query
+    matchLabels:
+      app: my-app
+  replicas: 3         # pod 복제본 개수
+  template:           # pod template (pod 실행 정보)
+    metadata:
+      labels:
+        app: my-app   # selector에 정의한 label을 포함해야 deployment에 의해 관리됨
+    spec:
+      containers:
+      - name: my-app
+        image: my-app:1.0
+```
+
+이처럼 배포된 Deployment 오브젝트에 대해 Pod template을 변경하여 재배포를 하게 되면 어떻게 될까요?
+Pod 개수를 조정 및 삭제하여 신규 이미지의 Pod를 배포했던 ReplicaSet과 달리 Deployment는 새로운 ReplicaSet을 생성해 새로운 버전의 이미지를 통해 Pod를 띄우고, 기존에 존재했던 ReplicaSet의 scale을 0으로 조정해 원래 사용했던 pod의 개수를 0개로 줄입니다.  
+ReplicaSet을 이용해 배포할 때는 사용자가 직접 진행했던 작업을 쿠버네티스에서 책임지고 진행해주는 것입니다.  
+
+## Deployment 배포(롤아웃) 전략
+Deployment를 통해 신규 버전을 배포할 때 사용되는 전략에는 여러 가지가 있습니다.  
+몇 가지를 하나씩 알아보도록 하겠습니다.  
+
+### Recreate 배포 전략
+Recreate 전략으로 신규 버전을 배포하면 Deployment는 이전 Pod를 모두 종료하고 새로운 Pod를 replicas만큼 생성합니다.  
+이 방식을 통해 배포를 진행하면 이전 버전의 Pod를 모두 삭제한 후에 새로운 Pod들을 생성하므로 필연적으로 Pod가 하나도 존재하지 않는 시점이 생깁니다.  
+이는 서비스 다운타임이 발생한다는 의미가 되기 때문에, 개발 단계에서는 시도해봄직 한 방식이지만 운영 시에는 사용하기 적합하지 않습니다.  
+
+**replicas=3일 때 `Recreate` 배포 전략으로 배포시 pod의 상태**   
+
+|단계|pod1|pod2|pod3|상태|
+|---|---|---|---|---|
+|롤아웃 시작|v1|v1|v1|이전 버전의 pod 3개 존재|
+|롤아웃 진행중|-|-|v1|이전 버전의 pod 삭제중|
+|롤아웃 진행중|-|-|-|이전 버전의 pod 모두 삭제됨, 신규 버전의 Pod 배포 전 <-- pod가 하나도 존재 X|
+|롤아웃 완료|v2|v2|v2|신규 버전의 pod 배포 완료|  
+
+
+### RollingUpdate 배포 전략
+RollingUpdate 전략으로 신규 버전을 배포하면 Deployment는 새로운 Pod 생성과 이전 Pod 종료를 동시에 진행하며 배포를 수행합니다.  
+이 방식을 통해 배포하면 이전 버전의 Pod가 삭제된 개수만큼 신규 pod가 생성됩니다.  
+따라서 서비스 다운타임이 따로 발생하지는 않지만, 이전 버전의 Pod와 새로운 버전의 Pod가 함께 존재하므로 이전 버전의 Pod쪽으로 요청이 들어오면 예전 버전의 응답을 주게 됩니다.  
+
+**replicas=3일 때 `RollingUpdate` 배포 전략으로 배포시 pod의 상태**   
+|단계|pod1|pod2|pod3|상태|
+|---|---|---|---|---|
+|롤아웃 시작|v1|v1|v1|이전 버전의 pod 3개 존재|
+|롤아웃 진행중|v2|v1|v1|이전 버전의 pod 삭제 & 신규 버전 pod 생성|
+|롤아웃 진행중|v2|v2|v1|이전 버전의 pod 삭제 & 신규 버전 pod 생성|
+|롤아웃 완료|v2|v2|v2|신규 버전의 pod 배포 완료|  
+
+
+### Recreate와 RollingUpdate 비교
+- Recreate (재생성)
+  - 새로운 버전을 배포하기 전에 이전 버전이 즉시 종료됨
+  - 컨테이너가 정상적으로 시작되기 전까지 서비스하지 못함
+  - replicas 수만큼 컴퓨팅 리소스 필요
+  - 개발 단계에서 유용
+- RollingUpdate (롤링 업데이트)
+  - 새로운 버전을 배포하면서 이전 버전을 종료
+  - 서비스 다운 타임 최소화
+  - 동시에 실행되는 Pod의 개수가 replicas를 넘게 되므로 컴퓨팅 리소스 더 많이 필요
+
+
+### RollingUpdate 방식의 배포 속도 조절
+RollingUpdate 방식은 점진적으로 배포하는 개수에 따라서 배포 속도를 조절할 수 있습니다.  
+속도에 관련된 옵션 2가지를 살펴보도록 하겠습니다.  
+
+**maxUnavailable**   
+maxUnavailable은 최대로 이용하지 못하는 Pod의 개수를 지정하는 것입니다.  
+즉 Deployment를 다시 배포했을 때 최대 몇 개까지를 즉시 종료할 수 있을 지를 정의하는 것입니다.  
+
+maxUnavailble 옵션을 이용하면 롤링 업데이트를 수행하는 동안 유지하고자 하는 최소 Pod 비율/개수를 지정할 수 있습니다.  
+최소 pod 유지 비율은 100 - maxUnavailable 값으로 예를 들어 replicas가 10일 때 maxUnavailable을 30%로 지정하면 최소 Pod 유지 비율은 70%가 되는 것입니다.  
+위의 상황은 아래와 서로 다른 표현법으로 아래와 같이 표현할 수 있으며 각각이 의미하는 바는 동일합니다.  
+- 이전 버전의 Pod를 replicas 수의 최대 30%까지 즉시 Scale Down 할 수 있다
+- replicas를 10으로 선언했을 때 이전 버전의 pod를 3개까지 즉시 종료할 수 있다
+- 새로운 버전의 Pod 생성과 이전 버전의 Pod 종료를 진행하면서 replicas 수의 70% 이상의 Pod를 항상 Running 상태로 유지해야 한다  
+
+**maxSurge**
+새로운 버전의 Pod를 한 번에 최대 몇 개까지 생성할 수 있는 지에 대한 옵션입니다.  
+이 옵션을 이용하면 롤링 업데이트를 수행하는 동안 허용할 수 있는 최대 Pod의 비율/개수를 지정할 수 있습니다.  
+
+최대 Pod 허용 비율 = maxSurge 값이므로 replicas가 10개일 떄 maxSurge=30%라면 아래와 같은 동작들이 가능합니다.  
+- 새로운 버전의 Pod를 replicas 수의 최대 30%까지 즉시 Scale Up 할 수 있다
+- 새로운 버전의 Pod를 3개까지 즉시 생성할 수 있다  
+- 새로운 버전의 Pod 생성과 이전 버전의 Pod 종료를 진행하면서 총 Pod 수가 replicas 수의 130%를 넘지 않도록 유지해야한다  
+
+
+## Deployment 롤백 전략
+Deployment는 롤아웃 히스토리를 Revision # 으로 관리합니다.  
+
+Deployment Revision이 Revision 1, Revision 2, Revision 3 이 있다면 Revision 1이 가장 오래된 롤아웃 히스토리이고, Revision 3이 가장 최신 Revision 히스토리입니다.  
+Deployment를 이용해 롤백을 하는 경우에는 현재 상태에서 특정 Revision N으로 바로 이동이 가능합니다.  
+또한 특정 Revision에 대해 조회를 하면 해당 Revision 배포 시 사용했던 Pod Template의 상세 정보를 조회할 수 있습니다.  
+```yml
+# Pod Template 조회 결과
+Pod Template:
+  Labels: app=my-app
+          version=v1
+          pod-template-hash=ca76d9fd83    # hash값이 같다면 같은 pod template으로 배포한 것임  
+  Annotations: kubernetes.io/change-cause: v1 배포
+  Containers:
+    my-app:
+      Image: nginx:1.16.1
+      Port: 80/TCP
+```
+
+Revision을 이용해 롤백할 때 사용하는 명령어는 아래와 같습니다.  
+```sh
+# Revision 1 버전으로 롤백 수행
+$ kubectl rollout undo deployment <deployment-name> --to-revision=1
+```
+
