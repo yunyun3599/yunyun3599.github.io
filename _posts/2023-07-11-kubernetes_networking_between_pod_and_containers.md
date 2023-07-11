@@ -1,5 +1,21 @@
+---
+title:  "Kubernetes pod 네트워킹"
+excerpt: "kubernetes의 pod간의 네트워크 통신에 대해 알아봅니다."
+
+categories:
+  - Kubernetes
+tags:
+  - [Kubernetes, Devops]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-07-11
+last_modified_at: 2023-07-11
+---
+
 # Pod과 컨테이너들간의 통신
-이번 포스트에서는 Pod이 컨테이너 혹은 다른 Pod과 어떻게 통신하는 지 알아보도록 하겠습니다.  
+이번 포스트에서는 Pod가 컨테이너 혹은 다른 Pod과 어떻게 통신하는 지 알아보도록 하겠습니다.  
 
 이를 위해 아래 두 가지 사항을 확인해보도록 하겠습니다.  
 1. Pod 안에 서로 다른 컨테이너끼리 localhost로 통신
@@ -22,23 +38,25 @@
 
 그리고 각각의 엔드포인트를 제공하는 애플리케이션 코드는 Node로 작성되었으며, 대표적으로 `/sky`와 `/hello` 엔드포인트를 갖는 컨테이너의 애플리케이션 코드는 다음과 같습니다.   
 1. `/sky` 엔드포인트
-  ```js
-  const POD_IP = process.env.POD_IP
-  const NODE_NAME = process.env.NODE_NAME
-  const NAMESPACE = process.env.NAMESPACE
+{{raw}}
+    ```js
+    const POD_IP = process.env.POD_IP
+    const NODE_NAME = process.env.NODE_NAME
+    const NAMESPACE = process.env.NAMESPACE
 
-  app.get('/sky', (req, res) => {
-    res.render('sky', {podIP: POD_IP, nodeName: NODE_NAME, namespace: NAMESPACE})
-  })
+    app.get('/sky', (req, res) => {
+      res.render('sky', {podIP: POD_IP, nodeName: NODE_NAME, namespace: NAMESPACE})
+    })
 
-  app.get('/hello', (req, res) => {
-    res.json("Hello, This container is Sky container")
-  })
+    app.get('/hello', (req, res) => {
+      res.json("Hello, This container is Sky container")
+    })
 
-  app.listen(PORT, () => {
-    console.log(`Server is running on ${PORT}`)
-  })
-  ```
+    app.listen(PORT, () => {
+      console.log(`Server is running on ${PORT}`)
+    })
+    ```
+{{endraw}}
 
 ## pod 및 컨테이너 설정
 ### /sky 엔드포인트를 갖는 blue-app 설정
@@ -108,7 +126,7 @@ spec:
 ```
 
 ### /rose 엔드포인트를 갖는 red-app 설정
-다음으로는 `/rose`라는 엔드포인트를 갖는 컨테이너를 blue-app이라는 이름으로 띄우기 위해 아래와 같은 yaml 파일을 작성하도록 하겠습니다.  
+다음으로는 `/rose`라는 엔드포인트를 갖는 컨테이너를 red-app이라는 이름으로 띄우기 위해 아래와 같은 yaml 파일을 작성하도록 하겠습니다.  
 이 컨테이너는 red-app 이라는 pod 내에 생성되며 8080 포트를 사용하게 됩니다.  
 ```yaml
 apiVersion: v1
@@ -209,3 +227,4 @@ $ kubectl port-forward red-app 8082:8080
 ```
 포트포워딩을 한 후에 해당 포트의 제공되는 url로 접근해보면 아래와 같은 화면을 볼 수 있습니다.  
 ![](/assets/img/2023/04/2023-04-12-kubernetes_pod_networking/blue-app_sky_endpoint_web_browser.png)
+
