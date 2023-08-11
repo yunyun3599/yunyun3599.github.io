@@ -74,7 +74,7 @@ Deployment를 통해 신규 버전을 배포할 때 사용되는 전략에는 �
 ### Recreate 배포 전략
 Recreate 전략으로 신규 버전을 배포하면 Deployment는 이전 Pod를 모두 종료하고 새로운 Pod를 replicas만큼 생성합니다.  
 이 방식을 통해 배포를 진행하면 이전 버전의 Pod를 모두 삭제한 후에 새로운 Pod들을 생성하므로 필연적으로 Pod가 하나도 존재하지 않는 시점이 생깁니다.  
-이는 서비스 다운타임이 발생한다는 의미가 되기 때문에, 개발 단계에서는 시도해봄직 한 방식이지만 운영 시에는 사용하기 적합하지 않습니다.  
+이는 서비스 다운타임이 발생한다는 의미가 되기 때문에, 개발 단계에서는 시도해볼만한 방식이지만 운영 시에는 사용하기 적합하지 않습니다.  
 
 **replicas=3일 때 `Recreate` 배포 전략으로 배포시 pod의 상태**   
 
@@ -161,4 +161,107 @@ Revision을 이용해 롤백할 때 사용하는 명령어는 아래와 같습�
 # Revision 1 버전으로 롤백 수행
 $ kubectl rollout undo deployment <deployment-name> --to-revision=1
 ```
+
+
+## Deployment 이용 예시  
+Deployment의 동작을 확인해보기 위해 다음 4가지 항목에 대한 수행 결과를 확인해보도록 하겠습니다.   
+1. Deployment를 통한 Relicaset 생성과 Pod 복제 결과 확인  
+2. Deployemnt Pod replicas 변경 후 결과 확인  
+3. Deployment Pod Template 이미지 변경 후 결과 확인
+4. Deploymetn Pod Template 레이블 변경 후 결과 확인  
+
+### Deployment 생성 및 replicas 변경  
+Deployment 오브젝트를 생성하고 `kubectl sacel -- replicas` 명령어를 통해 Pod replicas를 변경해보도록 하겠습니다.  
+ 
+사용할 deployment 오브젝트를 다음과 같이 `deployment.yaml` 파일로 정의합니다.  
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+        project: deployment_sample
+        env: local
+    spec:
+      containers:
+      - name: my-app
+        image: yoonjeong/my-app:1.0
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+```
+
+그리고 다음 명령어를 통해 deployment 오브젝트를 생성합니다.  
+```sh
+$ kubectl apply -f deployment.yaml
+```
+
+생성된 오브젝트를 다음 명령어를 통해 조회할 수 있습니다.  
+```sh
+$ kubectl get deployment/my-app
+```
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/kubectl_get_deployment.png)
+
+상세 정보 조회는 `describe` 명령어를 통해 가능합니다.  
+```sh
+$ kubectl describe deployment/my-app
+```
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/kubectl_describe_deployment.png)
+
+<br/>
+
+> Deployment를 통해 생성되는 ReplicaSet과 Pod 이름의 특성은 아래와 같습니다.     
+> **ReplicaSet 이름:** `<deployment-name>-<pod-template-hash>`   
+> **Pod 이름:** `<deployment-name>-<pod-template-hash>-<임의의 문자열>`   
+![](2023-08-06-15-23-46.png)
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/kubectl_get_pod_get_replicaset.png)
+>> **pod-template-hash:** Pod Template을 해싱한 값  
+>  
+> ReplicaSet 이름 생성 방식을 통해 Pod Template이 변경되면 pod-template-hash도 변경되므로 Pod Template이 변경되면 새로운 ReplicaSet이 생성됨을 알 수 있습니다.   
+> 또한 pod-template-hash가 ReplicaSet과 Pod의 Labels에 추가된 것도 확인할 수 있습니다.  
+
+Deployment가 생성될 때 Replicaset의 상태 변화를 확인해보면 다음과 같습니다.   
+```sh
+$ kubectl get rs -w
+```
+```
+NAME                DESIRED   CURRENT   READY   AGE
+my-app-65cb545f45   2         0         0       0s
+my-app-65cb545f45   2         0         0       0s
+my-app-65cb545f45   2         2         0       0s
+my-app-65cb545f45   2         2         1       3s
+my-app-65cb545f45   2         2         2       3s
+```  
+
+Deploy가 생성될 때 Pod의 상태 변화를 확인해보면 다음과 같습니다.   
+```sh
+$ kubectl get deployment -w
+```
+```
+NAME     READY   UP-TO-DATE   AVAILABLE   AGE
+my-app   0/2     0            0           0s
+my-app   0/2     0            0           0s
+my-app   0/2     0            0           0s
+my-app   0/2     2            0           0s
+my-app   1/2     2            1           3s
+my-app   2/2     2            2           3s
+```
+
+또한 Deployment의 배포 진행 및 완료 상태를 확인할 때 사용할 수 있는 명령어로는 아래 명령어가 있습니다.
+```
+$ kubectl rollout status deployment/my-app
+```
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/rollout_status_deployment.png)
+명령어의 결과로 위의 메세지를 보게된다면, 모든 pod가 잘 생성되었다고 볼 수 있습니다.  
 
