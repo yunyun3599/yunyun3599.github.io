@@ -48,6 +48,8 @@ apiVersion: apps/v1   # kubernetes API 버전
 kind: Deployment      # 오브젝트 타입
 metadata:             # 오브젝트 식별을 위한 정보
   name: my-app        # 오브젝트 이름
+  labels:
+        app: my-app
 spec:                 # 배포하려는 Pod 정보
   selector:           # ReplicaSet을 통해 관리할 Pod를 선택하기 위한 Label query
     matchLabels:
@@ -265,3 +267,157 @@ $ kubectl rollout status deployment/my-app
 ![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/rollout_status_deployment.png)
 명령어의 결과로 위의 메세지를 보게된다면, 모든 pod가 잘 생성되었다고 볼 수 있습니다.  
 
+**Deployment의 Pod Replicas 변경 (spec.replicas)**  
+pod replicas를 변경해 deployment에서 관리하는 pod의 개수를 변경해보도록 하겠습니다.  
+```sh
+$ kubectl scale deployment/my-app --replicas=5
+```  
+
+replicas 개수를 변경한 후에 Deployment의 이벤트를 확인해보면 아래와 같습니다.  
+```sh
+$ kubectl describe deployment/my-app
+```
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/scale_replicas_and_describe_event.png)
+
+
+replicaset의 이벤트를 다음 명령어를 통해 조회해보면 아래와 같습니다.  
+```sh
+$ kubectl describe rs/my-app-<replicaset hash 값>
+```
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/kubectl_describe_rs.png)
+
+
+**Deployment를 통해 생성한 Pod로 요청 전달 & 응답 확인**  
+pod에 연결하기 위해 pod의 8080번 포트를 로컬의 8080번 포트로 포트포워딩 해보도록 하겠습니다.  
+```sh
+$ kubectl port-forward deployment/my-app 8080:8080
+```
+
+작업 후에 `localhost:8080` 주소로 접근하면 다음과 같은 결과를 확인할 수 있습니다.  
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/port-forward_and_check_result.png)
+
+
+**Deployment의 replicas 변경 결론**  
+위의 명령어들을 통해 상태를 조회해본 결과 deployment의 replicas를 변경한다고 해서 새로운 ReplicaSet이 생성되지는 않는 것을 알 수 있습니다.  
+그러나 이미 생성한 ReplicaSet이 새로운 Pod를 필요한 개수만큼 추가적으로 생성합니다.  
+
+
+**리소스 삭제**  
+위에서 생성한 deployment 오브젝트를 아래 명령어를 통해 삭제합니다.  
+```sh
+# deployment를 삭제하는 방식
+$ kubectl delete deployment/my-app
+
+# 특정 label을 갖는 모든 리소스를 삭제하는 명령어: kubectl delete all -l <label-key>=<label-value>
+$ kubectl delete all -l app=my-app
+```
+
+
+## Deployment Pod Template 이미지 변경  
+다음 실습으로는 `my-app:1.0` 이미지로 생성한 deployment의 컨테이너들을 `my-app:2.0` 이미지로 변경하고 싶을 때 어떻게 하면 되는 지에 대해서 알아보도록 하겠습니다.  
+
+이번 실습에서 확인해볼 사항은 아래와 같습니다.  
+1. Deployment 생성
+2. Deployment의 Pod Template 이미지 변경
+3. Deployment, ReplicaSet, Pod 변화 확인  
+
+deployment의 이미지를 변경하면 template의 hash값이 변함에 따라 pod들은 아래 그림처럼 새로 생성됩니다.  
+새로운 ReplicaSet을 생성하고 기존에 존재하던 Pod를 제거하는 과정을 거쳐 모든 Pod를 새로운 Replicaset에 의해 생성된 Pod로 변경하게 됩니다.  
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/deployment_template_image_update.png)
+
+### Deployment 생성
+새로 생성할 Deployment 오브젝트는 앞에서 생성한 Deployment와 거의 유사하나 replicas만 개수를 3개로 늘려 배포하도록 하겠습니다.  
+deployment 생성 정보를 작성한 `deployment2.yml` 파일을 아래와 같이 작성합니다.  
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  labels:
+        app: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+        project: deployment_sample2
+        env: local
+    spec:
+      containers:
+      - name: my-app
+        image: yoonjeong/my-app:1.0
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+```
+
+아래 명령어를 통해 deployment를 생성합니다.  
+```sh
+$ kubectl apply -f deployment2.yaml
+```
+
+Deployment의 ReplicaSet 이벤트를 아래 명령어를 통해 확인해볼 수 있습니다.  
+```sh
+$ kubectl describe deployment/my-app
+```
+
+ReplicaSet의 pod 개수 변화를 확인하기 위해서는 다음 명령어룰 사용할 수 있습니다.  
+```sh
+$ kubectl get rs -w
+```
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/kubectl_get_rs_-w.png)
+
+Deployment를 통해 생성한 Pod의 상태를 확인하기 위해서는 다음 명령어를 사용할 수 있습니다.  
+```sh
+$ kubectl get deployment -w
+```
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/kubectl_get_deployment_-w.png)
+
+또한 deployment의 배포 진행/완료 상태를 확인하고 싶을 때는 다음 명령어를 사용할 수 있습니다.  
+```sh
+$ kubectl rollout status deployment/my-app
+```
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/kubectl_rollout_status_deployment.png)
+
+
+### Deployment의 Pod Template 이미지 변경
+Deploymentdml my-app 컨테이너 imagefmf 2.0으로 변경하도록 하겠습니다.   
+Pod 이미지를 변경하기 위해 사용해야 하는 명령어는 다음과 같습니다.  
+```sh
+$ kubectl set image deployment/my-app my-app=yoonjeong/my-app:2.0
+```
+
+이미지를 변경한 후 각종 명령어를 통해 pod 및 replicaset의 변경 상태를 추적해보도록 하겠습니다.   
+Deployment의 ReplicaSet 이벤트를 확인해보면, 이전 버전의 pod들은 점점 감소하고 새로운 pod들이 총 3개까지 새로 생성되는 것을 확인할 수 있습니다.  
+```sh
+$ kubectl describe deployment/my-app
+```
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/kubectl_describe_after_set_image.png)
+
+ReplicaSet의 pod 개수 변화를 확인하기 위해서는 다음 명령어룰 사용할 수 있습니다.  
+```sh
+$ kubectl get rs -w
+```
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/get_rs_-w_after_set_image.png)
+
+Deployment를 통해 생성한 Pod의 상태를 확인하기 위해서는 다음 명령어를 사용할 수 있습니다.  
+```sh
+$ kubectl get deployment -w
+```
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/kubectl_get_deployment_-w_after_set_image.png)
+
+또한 deployment의 배포 진행/완료 상태를 확인하고 싶을 때는 다음 명령어를 사용할 수 있습니다.  
+```sh
+$ kubectl rollout status deployment/my-app
+```
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/rollout_status_after_set_image.png)
+
+위의 과정을 그림으로 확인해보면 아래 그림과 같이 pod의 변경이 일어납니다.  
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/pod_changes.png)
