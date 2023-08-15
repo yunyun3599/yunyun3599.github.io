@@ -172,11 +172,12 @@ Deployment의 동작을 확인해보기 위해 다음 4가지 항목에 대한 �
 3. Deployment Pod Template 이미지 변경 후 결과 확인
 4. Deploymetn Pod Template 레이블 변경 후 결과 확인  
 
-### Deployment 생성 및 replicas 변경  
+## Deployment 생성 및 replicas 변경  
 Deployment 오브젝트를 생성하고 `kubectl sacel -- replicas` 명령어를 통해 Pod replicas를 변경해보도록 하겠습니다.  
  
-사용할 deployment 오브젝트를 다음과 같이 `deployment.yaml` 파일로 정의합니다.  
-```yaml
+ ### Deployment 정의
+사용할 deployment 오브젝트를 다음과 같이 `deployment.yml` 파일로 정의합니다.  
+```yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -206,7 +207,7 @@ spec:
 
 그리고 다음 명령어를 통해 deployment 오브젝트를 생성합니다.  
 ```sh
-$ kubectl apply -f deployment.yaml
+$ kubectl apply -f deployment.yml
 ```
 
 생성된 오브젝트를 다음 명령어를 통해 조회할 수 있습니다.  
@@ -267,7 +268,7 @@ $ kubectl rollout status deployment/my-app
 ![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/rollout_status_deployment.png)
 명령어의 결과로 위의 메세지를 보게된다면, 모든 pod가 잘 생성되었다고 볼 수 있습니다.  
 
-**Deployment의 Pod Replicas 변경 (spec.replicas)**  
+### Deployment의 Pod Replicas 변경 (spec.replicas)
 pod replicas를 변경해 deployment에서 관리하는 pod의 개수를 변경해보도록 하겠습니다.  
 ```sh
 $ kubectl scale deployment/my-app --replicas=5
@@ -297,7 +298,7 @@ $ kubectl port-forward deployment/my-app 8080:8080
 ![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/port-forward_and_check_result.png)
 
 
-**Deployment의 replicas 변경 결론**  
+### Deployment의 replicas 변경 결론
 위의 명령어들을 통해 상태를 조회해본 결과 deployment의 replicas를 변경한다고 해서 새로운 ReplicaSet이 생성되지는 않는 것을 알 수 있습니다.  
 그러나 이미 생성한 ReplicaSet이 새로운 Pod를 필요한 개수만큼 추가적으로 생성합니다.  
 
@@ -328,7 +329,7 @@ deployment의 이미지를 변경하면 template의 hash값이 변함에 따라 
 ### Deployment 생성
 새로 생성할 Deployment 오브젝트는 앞에서 생성한 Deployment와 거의 유사하나 replicas만 개수를 3개로 늘려 배포하도록 하겠습니다.  
 deployment 생성 정보를 작성한 `deployment2.yml` 파일을 아래와 같이 작성합니다.  
-```yaml
+```yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -360,7 +361,7 @@ spec:
 
 아래 명령어를 통해 deployment를 생성합니다.  
 ```sh
-$ kubectl apply -f deployment2.yaml
+$ kubectl apply -f deployment2.yml
 ```
 
 Deployment의 ReplicaSet 이벤트를 아래 명령어를 통해 확인해볼 수 있습니다.  
@@ -421,3 +422,114 @@ $ kubectl rollout status deployment/my-app
 
 위의 과정을 그림으로 확인해보면 아래 그림과 같이 pod의 변경이 일어납니다.  
 ![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/pod_changes.png)
+
+마지막으로 포트포워딩을 통해 신규 생성된 pod에 접근이 가능하도록 작업한 뒤 결과를 확인해보겠습니다.  
+```sh
+$ kubectl port-forward deployment/my-app 8080:8080
+```
+
+위의 명령어 수행 후에 `localhost:8080`으로 접근하면 아래와 같이 version 2 이미지를 이용한 컨테이너에서 응답을 주는 것을 확인할 수 있습니다.  
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/get_respones_from_container_version_2.png)
+
+### Deployment의 Pod Template 이미지 변경 정리
+Deployment에서 Pod의 Template 이미지를 변경하면 Deployment는 새로운 ReplicaSet을 생성합니다.  
+새로운 ReplicaSet은 새로은 Pod를 replicas 수만큼 생성하고, 이전 ReplicaSet은 자신이 관리하는 Pod를 모두 제거합니다.   
+
+
+## Deployment Pod Template 레이블 변경  
+다음으로는 Deployment를 이용해 배포한 Pod의 Template 레이블을 변경하면 어떻게 되는 지 확인해보도록 하겠습니다.  
+
+이번 실습에서 확인해볼 사항은 아래와 같습니다.  
+1. Deployment 생성
+2. Deployment의 Pod Template 레이블 변경
+3. Deployment, ReplicaSet, Pod 변화 확인  
+
+Pod Template의 레이블을 바꾸는 경우에도 위에서 이미지를 변경했을 때와 동일하게 새로운 ReplicaSet을 생성하고 기존에 존재하던 Pod를 제거하는 과정을 거쳐 모든 Pod를 새로운 Replicaset에 의해 생성된 Pod로 변경하게 됩니다.  
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/deployment_template_image_update.png)
+
+
+### Deployment 생성
+이전과 동일한 내용의 `deployment3.yml` 파일을 작성하고 배포해보도록 하겠습니다.  
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  labels:
+        app: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+        project: deployment_sample2
+        env: local
+    spec:
+      containers:
+      - name: my-app
+        image: yoonjeong/my-app:1.0
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+```
+
+아래 명령어를 통해 deployment를 생성합니다.  
+```sh
+$ kubectl apply -f deployment3.yml
+```
+
+### label 변경
+template의 label에 `tier: backend`를 아래와 같이 deployment3.yml 파일에 추가한 후 apply명령어를 통해 재배포해보도록 하겠습니다.  
+```yml
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+        project: deployment_sample2
+        env: local
+        tier: backend
+```
+
+```sh
+$ kubectl apply -f deployment3.yml
+```
+
+### pod 및 replicaset 상태 확인  
+변경된 파일을 `apply` 한 후 이벤트를 확인해보도록 하겠습니다.  
+```sh
+$ kubectl describe deployment/my-app
+```
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/describe_deployment_after_change_labels.png)
+
+변경/배포상태를 확인해보면 아래와 같습니다.  
+```sh
+$ kubectl rollout status deployment/my-app
+```
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/rollout_status_after_change_label.png)
+
+위의 실습에서 확인한 것처럼 replicaset의 상태를 watch모드로 확인해보면 다음과 같이 새로운 label을 배포한 시점에 신규 replicaset이 생성되었으며, 이전 replicaset의 pod들은 삭제되는 것을 확인할 수 있습니다.  
+```sh
+$ kubectl get rs -w
+```
+![](/assets/img/2023/07/2023-08-06-kubernetes_deployment/get_rs_-w_label_change.png)
+
+
+## Deployment를 통한 배포 정리  
+Deployment를 통해 배포한 ReplicaSet과 Pod들을 확인해보는 과정을 위에서 거쳤습니다.  
+이와 같은 실습을 통해 최종적으로 정리할 수 있는 내용은 다음과 같습니다.  
+
+1. Pod Template이 변경될 때 Deployment의 롤아웃 기능이 트리거됨   
+2. Pod Template이 변경되면 pod-template-hash값이 변경됨  
+3. 변경된 pod-template-hash 값은 ReplicaSet과 Pod에 모두 반영됨  
