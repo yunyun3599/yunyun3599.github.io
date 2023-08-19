@@ -1,3 +1,20 @@
+---
+title:  "Kubernetes Label과 Selector"
+excerpt: "kubernetes의 Label, Selector에 대해 알아봅니다."
+
+categories:
+  - Kubernetes
+tags:
+  - [Kubernetes, Devops]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-08-19
+last_modified_at: 2023-08-19
+---
+
+
 # 쿠버네티스 Label, Selector
 
 ## Label과 Selector란
@@ -125,7 +142,7 @@ $ kubectl label pod bird-app location=ground
 # 값 변경
 $ kubectl label pod bird-app location=sky --overwrite
 ```
-![](/assets/img/2023/04/2023-04-15-kubernetes_label_selector/set_label_overwrite.pn
+![](/assets/img/2023/04/2023-04-15-kubernetes_label_selector/set_label_overwrite.png)
 
 여러 개의 Label 중 특정 값만을 확인하고 싶다면 아래 명령어를 통해 원하는 key값을 명시해주면 됩니다.  
 ```sh
@@ -269,7 +286,7 @@ $ kubectl get node
 # kubectl label node <노드 Name> <label_key=label_value>
 $ kubectl label node gke-my-cluster-default-pool-18f2f739-7h0n env=animal
 ```
-![](/assets/img/2023/04/2023-04-21-kubernetes_deploy_pod_with_nodeSelector/kubectl_label_node.png) . 
+![](/assets/img/2023/04/2023-04-21-kubernetes_deploy_pod_with_nodeSelector/kubectl_label_node.png)  
 
 node에 label이 잘 생성되었는 지 확인해보도록 하겠습니다.  
 ```sh
