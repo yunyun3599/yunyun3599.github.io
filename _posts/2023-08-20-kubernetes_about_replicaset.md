@@ -1,3 +1,19 @@
+---
+title:  "Kubernetes ReplicaSet"
+excerpt: "kubernetes의 ReplicaSet 개념에 대해 알아봅니다."
+
+categories:
+  - Kubernetes
+tags:
+  - [Kubernetes, Devops]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-08-20
+last_modified_at: 2023-08-20
+---
+
 # 쿠버네티스 Replica Set
 
 ## ReplicaSet이란
@@ -20,7 +36,7 @@ ReplicaSet을 이용하면 사람의 개입 없이도 문제 상황에서 자동
 
 ### Pod 수 조정의 자동화  
 결과적으로 ReplicaSet을 사용하면 원하는 개수만큼의 Pod 실행을 보장받고, 이를 위해 Pod의 복제 및 복구 작업을 자동화할 수 있다는 장점이 있습니다.  
-클러스터 관리자는 ReplicaSet을 만들어 필요한 Pod의 개수를 쿠버네티스에게 선업합니다.  
+클러스터 관리자는 ReplicaSet을 만들어 필요한 Pod의 개수를 쿠버네티스에게 선언합니다.  
 그러면 쿠버네티스는 ReplicaSet 요청서에 선언된 replicas 항목을 읽고 그 수만큼의 Pod 실행을 보장해주게 되는 것입니다.  
 
 ReplicaSet으로 Pod 개수를 관리하고자 할 때는 아래 항목들을 명시해주어야 합니다.  
@@ -40,7 +56,7 @@ metadata:               # 오브젝트 식별을 위한 정보
   labels:               # 오브젝트 집합을 구할 때 사용할 이름표
     app: sample-app
 
-spec:                   # 사용자가 원하는 Pod의 상태s
+spec:                   # 사용자가 원하는 Pod의 상태
   selector:             # ReplicaSet이 관리하고자 하는 Pod를 선택하기 위한 label query
   replicas:             # 원하는 Pod 복제본 개수
   template:             # Pod 실행 정보 - Pod Template과 동일 (Pod 배포를 위해 작성했던 yaml 파일과 동일한 내용 작성) 
