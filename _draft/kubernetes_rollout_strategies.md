@@ -113,13 +113,26 @@ $ kubectl apply -f deplyoment.yml
 ```sh
 $ kubectl describe deployment/my-app
 ```
+![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/describe_deployment_after_updating_image.png)
+기존에 생성되었던 replicaset의 pod 수를 0개로 줄인 후에 새로운 replicaset을 이용해 3개의 pod를 다시 띄우는 것을 확인할 수 있습니다.  
 
 replicaset의 상태 확인은 아래 명령어를 통해 가능합니다.  
 ```sh
 $ kubectl get rs -w
 ```
+![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/kubectl_get_rs_-w_after_update_image.png)
+deployment 초기 배포시 생성되었던 replicaset의 개수를 0개까지 줄이고 새로운 replicaset을 통해 다시 pod를 3개 띄우는 것을 확인할 수 있습니다.  
+
+deployment의 상태 확인은 아래 명령어를 통해 가능합니다.  
+```sh
+$ kubectl get deployment -w
+```
+![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/kubectl_get_deployment_-w_after_updating_image.png)
 
 ### Recreate 배포 전략 동작 방법  
 Recreate를 배포 전략으로 삼은 후 deployment에 업데이트 사항이 있을 때 pod와 replicaset은 다음 그림과 같이 동작합니다.  
 ![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/recreate_strategy_work_process.png)
+
+위의 그림에서 보면 알 수 있듯이 Recreate 전략 사용 시에는 기존 pod가 모두 제거되고 난 후에 새로운 pod가 생성됩니다.  
+따라서 Recreate 방식은 다운 타임이 발생하므로 운영에는 적합하지 않고 적은 리소스로 서비스를 확인해보는 개발 환경에 적합합니다.  
 
