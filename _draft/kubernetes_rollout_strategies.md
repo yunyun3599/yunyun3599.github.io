@@ -123,6 +123,7 @@ $ kubectl get rs -w
 ![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/kubectl_get_rs_-w_after_update_image.png)
 deployment 초기 배포시 생성되었던 replicaset의 개수를 0개까지 줄이고 새로운 replicaset을 통해 다시 pod를 3개 띄우는 것을 확인할 수 있습니다.  
 
+
 deployment의 상태 확인은 아래 명령어를 통해 가능합니다.  
 ```sh
 $ kubectl get deployment -w
@@ -135,4 +136,28 @@ Recreate를 배포 전략으로 삼은 후 deployment에 업데이트 사항이 
 
 위의 그림에서 보면 알 수 있듯이 Recreate 전략 사용 시에는 기존 pod가 모두 제거되고 난 후에 새로운 pod가 생성됩니다.  
 따라서 Recreate 방식은 다운 타임이 발생하므로 운영에는 적합하지 않고 적은 리소스로 서비스를 확인해보는 개발 환경에 적합합니다.  
+
+
+## RollingUpdate 배포
+RollingUpdate는 운영 환경에서 사용 가능한 배포 전략입니다.  
+RollingUpdate 방식을 통해 배포를 하면 기존 pod를 다 삭제한 후 신규 pod를 띄우지 않기 때문에 기존 pod와 신규 pod가 동시에 존재하는 시점이 존재합니다.   
+
+RollingUpdate 방식으로 배포할 때 속도 제어 옵션을 사용할 수 있는데요, 옵션으로는 maxUnavailable과 maxSurge가 있습니다.  
+- maxUnavailable: 기존의 Pod를 새로운 Pod로 전환하는 과정에서 Pod 제거와 생성을 반복할 때 최소로 유지해야하는 Pod의 개수
+  - `desired replicas - maxUnavailable`
+- maxSurge: 기존 Pod를 새로운 Pod로 전환하는 과정에서 Pod 제거와 생성을 반복할 때 동시에 존재할 수 있는 최대 Pod의 개수
+  - `desired replicas + maxSurge`
+
+
+RollingUpdate는 배포가 점진적으로 일어나며, 아래 그림과 같은 과정을 거쳐 신규 Pod로 모든 Pod들이 대체됩니다.   
+![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/rollingupdate_process.png) . 
+배포 과정 중 아래와 같이 기존 pod가 1개 더 종료되고있을 때 `replicas = 3, maxSurge=0`임을 감안하여, 한번에 정상 동작중인 pod가 최대 3개까지 가능하므로 2개의 신규 pod를 동시에 생성할 수 있습니다.  
+![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/rollinpudate_process2.png)
+
+추가적으로 `maxSurge=1`인 상황에 대해서 알아보도록 하겠습니다.   
+아래와 같은 상황에서 동시에 존재할 수 있는 pod 개수의 최소값은 2이고, 최대값은 4가 됩니다.   
+![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/rollingUpdate_maxSurge=1.png)  
+배포 과정 중 아래와 같이 기존 pod가 1개 더 종료되고있을 때 `replicas = 3, maxSurge=1`임을 감안하여, 한번에 정상 동작중인 pod가 최대 4개까지 가능하므로 3개의 신규 pod를 동시에 생성할 수 있습니다.  
+![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/rollingUpdate_maxSurge=1_v2.png)  
+
 
