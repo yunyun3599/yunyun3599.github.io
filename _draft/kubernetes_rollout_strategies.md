@@ -106,7 +106,7 @@ spec:
 
 변경 후에 apply 명령어를 이용해 deployment를 재배포합니다.  
 ```sh
-$ kubectl apply -f deplyoment.yml
+$ kubectl apply -f deployment.yml
 ```
 
 그리고 난 후 다음 명령어로 이벤트를 조회해봅니다.  
@@ -161,3 +161,141 @@ RollingUpdate는 배포가 점진적으로 일어나며, 아래 그림과 같은
 ![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/rollingUpdate_maxSurge=1_v2.png)  
 
 
+### RollingUpdate 배포 전략 동작 방법  
+RollingUpdate를 배포 전략으로 삼은 후 deployment에 업데이트 사항이 있을 때 pod와 replicaset은 다음 그림과 같이 동작합니다.  
+아래 그림은 `relicas=3, maxUnavailable=1, maxSurge=1`인 경우 재배포가 있을 때 동작 흐름입니다.
+![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/rollingupdate_strategy_work_process.png)  
+`maxSurge=1`이기 때문에 재배포 시작 즉시 신규 pod를 하나 생성할 수 있습니다.  
+그 후부터는 기존 pod가 하나 제거될 때마다 새로운 pod 배포가 가능합니다.  
+따라서 Ready 상태로 유지해야 하는 최소 ~ 최대 pod replicas 구간은 <2개 ~ 4개> 임을 알 수 있습니다.
+
+
+### Deployment 생성  
+Deployment를 배포하기 위해 아래 스펙대로 `deployment.yml` 파일을 작성합니다.  
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  labels:
+        app: my-app
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: my-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 2
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: my-app
+        project: deployment_sample
+        env: local
+    spec:
+      containers:
+      - name: my-app
+        image: yoonjeong/my-app:1.0
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+```
+strategy 항목을 보면 type을 RollingUpdate로 정의했으며, `maxUnavailable`을 2로, `maxSurge`를 1로 설정했음을 확인할 수 있습니다.  
+
+deployment를 아래 명령어를 통해 생성합니다.  
+```sh
+$ kubectl apply -f deployment.yml
+```
+
+deployment의 배포 진행 / 완료 상태를 확인하기 위해 아래 명령어를 사용합니다.  
+```sh
+$ kubectl rollout status deployment/my-app
+```
+![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/rollingupdate_rollout_status_deployment.png)
+
+app=my-app 레이블을 갖는 모든 리소스를 조회하기 위해서는 아래 명령어를 사용할 수 있습니다.  
+```sh
+$ kubectl get all -l app=my-app -o wide --show-labels
+```
+![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/rollingupdate_get_all_-l_app=my-app.png)
+
+
+### 컨테이너 이미지와 레이블 변경  
+위에서 생성한 deployment의 컨테이너 이미지와 레이블을 변경해서 재배포해보도록 하겠습니다.  
+앞서 작성한 `deployment.yml` 파일을 아래와 같이 변경해줍니다.  
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  labels:
+        app: my-app
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: my-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 2
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: my-app
+        project: deployment_sample
+        env: local
+        version: v2
+    spec:
+      containers:
+      - name: my-app
+        image: yoonjeong/my-app:2.0
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+```
+
+변경 후에 apply 명령어를 이용해 deployment를 재배포합니다.  
+```sh
+$ kubectl apply -f deployment.yml
+```
+
+그리고 난 후 다음 명령어로 이벤트를 조회해봅니다.  
+```sh
+$ kubectl describe deployment/my-app
+```
+![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/rollingupdate_describe_deployment_after_updating_image.png)   
+기존에 생성되었던 replicaset의 pod 수를 0개로 줄인 후에 새로운 replicaset을 이용해 5개의 pod를 다시 띄우는 것을 확인할 수 있습니다.  
+
+replicaset의 상태 확인은 아래 명령어를 통해 가능합니다.  
+```sh
+$ kubectl get rs -w
+```
+![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/rollingupdate_kubectl_get_rs_-w_after_update_image.png)   
+deployment 초기 배포시 생성되었던 replicaset의 개수를 0개까지 줄이고 새로운 replicaset을 통해 다시 pod를 5개 띄우는 것을 확인할 수 있습니다.  
+
+
+deployment의 상태 확인은 아래 명령어를 통해 가능합니다.  
+```sh
+$ kubectl get deployment -w
+```
+![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/rollingupdate_kubectl_get_deployment_-w_after_updating_image.png)
+
+
+### RollingUpdate 배포 전략 동작 방법  
+위의 실습에서 RollingUpdate를 배포 전략으로 삼아 deployment를 업데이트해보았습니다.  
+이 때 각 단계별로 replicaset과 pod는 다음과 같이 동작합니다.  
+![](/assets/img/2023/08/2023-08-17-kubernetes_deployment_rollout_strategies/rollingupdate_strategy_work_process_replicas_5.png)  
+`maxUnavailabe=2`이므로 재배포 직후 기존 pod를 2개까지 즉시 삭제할 수 있으며, `maxSurge=1`이기 때문에 최대 6개까지 동시에 pod를 띄울 수 있어 신규 pod 3개를 즉시 생성 가능합니다.   
+모든 pod가 신규 pod로 배포될 때까지 주어진 `maxUnavailable`과 `maxSurge`값에서 벗어나지 않는 선에서 신규 pod로 변경되고 있음을 확인할 수 있습니다.  
+`rollingupdate`는 이와 같이 서비스 다운타임이 발생하지 않으며, `maxUnavailable`과 `maxSurge`값을 통해 서버 자원 사용량을 조절 가능하다는 점에서 운영 환경에서 쓰이기 적합합니다.  
