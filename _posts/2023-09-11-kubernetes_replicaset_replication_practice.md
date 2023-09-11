@@ -1,3 +1,20 @@
+---
+title:  "Kubernetes ReplicaSet 배포 실습"
+excerpt: "kubernetes의 ReplicaSet을 활용하는 실습을 진행해봅니다."
+
+categories:
+  - Kubernetes
+tags:
+  - [Kubernetes, Devops]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-09-11
+last_modified_at: 2023-09-11
+---
+
+
 # ReplicaSet을 통한 Pod 배포 실습  
 ## ReplicaSet 오브젝트를 이용해 Pod 생성하기   
 ### ReplicaSet 선언 및 생성
@@ -60,7 +77,9 @@ $ kubectl get events --sort-by=metadata.creationTimestamp
 $ kubectl port-forward rs/blue-replicaset 8080:8080
 ```
 위 명령어를 통해 pod내 컨테이너의 8080 포트가 로컬 호스트의 8080 포트로 포워딩이 되면 앞서 생성한 blue-replicaset이라는 레플리카셋에 의해 생성된 파드로 트래픽이 전달됩니다.  
+
 이 때 주의해야할 점은 첫번째 생성된 파드로만 요청이 전달되며 로드밸런싱이 일어나지 않아 트래픽이 분산되지 않는다는 점입니다.  
+
 포트포워딩 후 브라우저에서 제공되는 엔드포인트를를 이용해 컨테이너에 접근하면 다음과 같은 결과를 얻을 수 있습니다.  
 ![](/assets/img/2023/05/2023-05-30-kubernetes_replicaset_replication_practice/kubectl_port_forward.png)
 
@@ -184,7 +203,8 @@ $ kubectl describe rs blue-replicaset
 새로운 pod가 생성된 것을 이벤트의 마지막줄을 통해 확인할 수 있습니다.  
 
 이러한 결과를 통해 ReplicaSet을 이용해 Pod의 생성과 복구를 자동화할 수 있음을 알 수 있습니다.  
-pod가 삭제되더라도 ReplicaSet을 통해 관리되는 pod들은 replicas에 선언된 개수를 유지하기 위해 자동으로 새루은 pod를 생성하기 때문입니다.  
+
+pod가 삭제되더라도 ReplicaSet을 통해 관리되는 pod들은 replicas에 선언된 개수를 유지하기 위해 자동으로 새로운 pod를 생성하기 때문입니다.  
 
 또한 단순히 pod 하나가 삭제된 것이 아니라 노드 전체가 실패하는 경우가 생기더라도 ReplicaSet을 통해 관리되고 있는 Pod들은 스케쥴러의 도움을 받아 정상 동작중인 새로운 노드에 replicas 개수를 맞춰 다시 배포되게 됩니다.  
 
