@@ -1,9 +1,25 @@
+---
+title:  "파이썬 unittest, pytest"
+excerpt: "파이썬의 단위 테스트 프레임워크 중 unittest와 pytest에 대해 알아봅니다."
+
+categories:
+  - Python
+tags:
+  - [Python, CleanCode]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-09-14
+last_modified_at: 2023-09-14
+---
+
 # 단위 테스트 - unittest, pytest
 
 ## 파이썬 단위 테스트 프레임워크  
 파이썬 코드를 단위 테스트할 때는 사용할 수 있는 많은 도구가 있는데요, 거의 모든 시나리오를 다룰 수 있는 두 가지 도구를 대표적으로 살펴보도록 하겠습니다.  
 1. unittest: 파이썬 표준 라이브러리에 포함
-2. pytest: pip를 통해 설치되는 라이브러라  
+2. pytest: pip를 통해 설치되는 라이브러리  
 
 ### unittest vs pytest
 unittest와 pytest 중 어떤 것을 어떤 상황에 사용하는 것이 좋을까요?  
