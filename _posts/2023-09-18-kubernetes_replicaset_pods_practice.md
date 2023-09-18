@@ -1,3 +1,19 @@
+---
+title:  "Kubernetes ReplicaSet - Pod 확인 실습"
+excerpt: "kubernetes의 ReplicaSet을 활용해 pod를 배포했을 때 Pod의 상태를 확인해보는 실습을 진행합니다."
+
+categories:
+  - Kubernetes
+tags:
+  - [Kubernetes, Devops]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-09-18
+last_modified_at: 2023-09-18
+---
+
 # ReplicaSet with Pods
 ReplicaSet을 통해 배포된 Pod들이 특정 상황에 어떤 식으로 설정 내용이 적용되어 배포되는 지에 대해 알아보도록 하겠습니다.  
 
