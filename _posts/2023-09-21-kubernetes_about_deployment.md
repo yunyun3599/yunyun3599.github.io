@@ -1,3 +1,19 @@
+---
+title:  "Kubernetes Deployment란"
+excerpt: "Kubernetes의 Deployment가 무엇인지 살펴보고 관련 개념과 명령어들을 알아봅니다."
+
+categories:
+  - Kubernetes
+tags:
+  - [Kubernetes, Devops]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-09-21
+last_modified_at: 2023-09-21
+---
+
 # 쿠버네티스 Deployment
 
 ## ReplicaSet과의 비교
