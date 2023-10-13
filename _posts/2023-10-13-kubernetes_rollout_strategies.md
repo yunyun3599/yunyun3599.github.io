@@ -1,3 +1,19 @@
+---
+title:  "Kubernetes Deployment 배포전략"
+excerpt: "Kubernetes의 Deployment의 배포 전략에 대해 알아봅니다."
+
+categories:
+  - Kubernetes
+tags:
+  - [Kubernetes, Devops]
+
+toc: true
+toc_sticky: true
+ 
+date: 2023-10-13
+last_modified_at: 2023-10-13
+---
+
 # Deployment 배포 전략  
 
 ## Recreate 배포

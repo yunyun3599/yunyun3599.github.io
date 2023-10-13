@@ -189,3 +189,7 @@ $ curl localhost:8080
 ```
 ![](/assets/img/2023/10/2023-10-09-kubernetes_service_clusterIP/curl_localhost_8080_order.png)
 
+
+## 환경변수를 활용한 Service 호출  
+다음으로는 특정 pod에서 다른 pod를 호출하고자 할 때 서비스를 통해 요청을 전달하는 방법 중 환경변수를 이용하는 방법에 대해 알아보도록 하겠습니다.  
+
