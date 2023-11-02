@@ -301,4 +301,121 @@ $ kubectl exec -ti <order pod name> -n snackbar -- curl payment.snackbar:80
 앞에서 서비스 이름만 가지고 curl 명령어를 호출했던 것처럼 호스트 이름에 네임스페이스를 명시하지 않으면 호출하는 pod가 속한 네임스페이스에서 도메인에 해당하는 IP 주소를 찾게 됩니다.  
 
 
+## 서비스 이름으로 다른 네임스페이스에 있는 서비스 호출  
+위에서는 서비스 이름으로 같인 `snackbar` 네임 스페이스에 있는 서비스를 호출하였습니다.  
+이번에는 다른 네임스페이스에 위치해있는 서비스를 서비스 이름을 이용하여 호출해보도록 하겠습니다.   
+![](/assets/img/2023/10/2023-10-09-kubernetes_service_clusterIP/call_service_in_other_namespace_by_service_name.png)   
+위의 그림처럼 `fancy-snackbar` 라는 네임스페이스에 있는 delivery라는 서비스를 서비스 이름을 이용해 호출해보도록 하겠습니다.  
 
+### delivery 서비스 배포  
+delivery 서비스를 배포하기 위해 아래 내용의 `delivery.yml` 파일을 작성해 줍니다.  
+```yml
+# delivery service
+apiVersion: v1
+kind: Service
+metadata:
+  name: delivery
+  namespace: fancy-snackbar
+  labels:
+    service: delivery
+    project: snackbar
+spec:
+  type: ClusterIP
+  selector:
+    service: delivery
+    project: snackbar
+  ports:
+  - port: 80
+    targetPort: 8080
+
+---
+
+# delivery deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: delivery
+  namespace: fancy-snackbar
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      service: delivery
+      project: snackbar
+  template:
+    metadata:
+      labels:
+        service: delivery
+        project: snackbar
+    spec:
+      containers:
+      - name: delivery
+        image: yoonjeong/my-app:2.0
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "50m"
+        ports:
+        - containerPort: 8080
+
+```
+
+작성한 후에는 아래 명령어를 통해 Service와 Deployment 오브젝트를 생성합니다.  
+```sh
+# namespace 생성  
+kubectl create namespace fancy-snackbar
+
+# Service, Deployment 오브젝트 생성
+kubectl apply -f delivery.yml
+```
+
+배포가 잘 되었는지 확인하기 위해 다음 명령어를 통해 `project=snackbar` label을 갖는 모든 리소스를 조회해보도록 하겠습니다.  
+```sh
+$ kubectl get all -l project=snackbar --all-namespaces
+```
+![](/assets/img/2023/10/2023-10-09-kubernetes_service_clusterIP/all_resource_labeled_project=snackbar.png)
+
+`project=snackbar` label을 갖는 모든 서비스의 endpoints도 조회해보도록 하겠습니다.  
+```sh
+$ kubectl get endpoints -l project=snackbar --all-namespaces
+```
+![](/assets/img/2023/10/2023-10-09-kubernetes_service_clusterIP/all_endpoints_labeled_project=snackbar.png)
+
+위와 같이 리소스들이 잘 생성되었음을 확인할 수 있습니다.   
+
+### 다른 네임스페이스의 ClusterIP Service로 요청 실행  
+생성된 `fancy-snackbar` 네임스페이스의 `delivery` 서비스로 `snackbar` 네임스페이스의 `order` 서비스에서 요청을 보내보도록 하겠습니다.  
+먼저 앞서 조회한 IP 주소를 이용해 요청을 보내보도록 하겠습니다.  
+```sh
+$ kubectl exec <order pod 이름> -n snackbar -- curl -s <delivery-service ip>:<서비스 port>
+```
+![](/assets/img/2023/10/2023-10-09-kubernetes_service_clusterIP/request_to_service_in_other_namespace_using_ip_address.png)
+위와 같이 응답이 잘 오는 것을 확인할 수 있습니다.  
+
+다음으로는 서비스 도메인 이름으로도 요청을 실행해보도록 하겠습니다.  
+```sh
+$ kubectl exec <order pod 이름> -n snackbar -- curl -s delivery.fancy-snackbar
+```
+![](/assets/img/2023/10/2023-10-09-kubernetes_service_clusterIP/request_to_service_in_other_namespace_using_service_name.png)
+잘 응답이 오는 것을 알 수 있습니다.  
+
+delivery 서비스는 order 서비스와 다른 네임스페이스에 위치해있는데요, 만약 도메인 이름으로 요청을 보낼 때 네임스페이스 부분을 생략하면 어떻게 될까요?  
+```sh
+$ kubectl exec order-6bf679f7f6-l2d6q -n snackbar -- curl -s delivery
+```
+![](/assets/img/2023/10/2023-10-09-kubernetes_service_clusterIP/request_to_service_in_other_namespace_by_service_name_without_namespace.png)
+
+### order pod 환경변수 조회
+이전에 환경변수를 통해 order 서비스에서 payment 서비스로 접근할 때에는 order 서비스 내의 payment 서비스 관련 환경 변수를 활용할 수 있었습니다.  
+다른 네임스페이스의 delivery 서비스에 대한 환경 변수도 설정이 되는 지 확인하기 위해 order 서비스 내의 환경변수를 확인해보도록 하겠습니다.  
+```sh
+$ kubectl exec <order pod 이름> -n snackbar -- env
+```
+![](/assets/img/2023/10/2023-10-09-kubernetes_service_clusterIP/check_order_pod_env.png)   
+delivery 서비스 관련 환경변수는 설정되어있지 않음을 확인할 수 있습니다.  
+
+## 마무리  
+실습이 완료되었다면 다음 명령어를 통해 모든 리소스를 제거하도록 하겠습니다.  
+```sh
+$ kubectl delete all -l projet=snackbar --all-namespace
+```
