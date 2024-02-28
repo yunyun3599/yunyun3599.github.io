@@ -100,6 +100,15 @@ $ mv test1.txt dir1
 $ mv dir1 dir2
 ```
 
+### 파일 속성 확인  
+파일의 속성을 확인하기 위해서는 `file` 명령어를 사용합니다.  
+```sh
+$ file test.txt
+```
+`file` 명령어의 결과로는 해당 파일이 비어있는지 여부나 어떠한 형태의 파일인지 등을 알 수 있으며 디렉토리 파일인지 바이너리 형태의 파일인지 등도 알 수 있습니다.  
+
+
+
 ## 디렉토리 관련 기본 명령어
 ### 디렉토리 생성  
 디렉토리 생성은 `mkdir` 명령어를 통해 가능합니다.  
@@ -161,3 +170,24 @@ $ ls -ali
 
 ![](/assets/img/2024/02/2024-02-25-linux_cli/symlink_and_hardlink.png)
 
+### 링크와 inode
+inode란 리눅스에서 파일을 관리하는 구조체로 inode에는 다양한 파일의 속성값과 권한, 파일 사이즈, 수정 시간 등의 정보들이 담겨있습니다.  
+파일은 실제 파일 데이터에 대한 포인터 역할을 하는데, 실제로는 inode를 중간에 거쳐서 파일을 가리키게 됩니다.  
+<img src="../assets/img/2024/02/2024-02-28-linux_inode/file_pointer_and_inode.png" width="50%"/>
+
+1. 하드링크    
+  어떠한 파일에 하드링크를 걸게 되면, 파일을 가르치는 포인터가 두개 생기는 것이므로 궁극적으로는 동일한 inode를 가리키는 포인터가 2개 생기게 됩니다.  
+  <img src="../assets/img/2024/02/2024-02-28-linux_inode/inode_with_hardlink.png" width="50%"/>
+2. 심볼릭 링크   
+  심볼릭 링크는 다른 inode를 하나 만들고 해당 inode가 원본 파일의 포인터를 가리키는 구조로 생성됩니다.  
+  <img src="../assets/img/2024/02/2024-02-28-linux_inode/inode_symlink.png" width="50%"/>
+
+
+## 시스템 관련 기본 명령어  
+1. `reboot`: 재부팅
+2. `poweroff` 종료
+3. `shutdown [OPTION] [TIME]`: 주어진 시간에 종료
+  - `shutdown -P now`: 바로 종료
+  - `shutdown -r now`: 바로 재시작
+
+  
