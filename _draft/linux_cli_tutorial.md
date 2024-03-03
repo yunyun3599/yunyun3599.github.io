@@ -190,4 +190,50 @@ inode란 리눅스에서 파일을 관리하는 구조체로 inode에는 다양�
   - `shutdown -P now`: 바로 종료
   - `shutdown -r now`: 바로 재시작
 
-  
+## 매뉴얼 관련 기본 명령어  
+명령어들을 다 외우기에는 양이 많기 때문에 관련 도움말을 볼 수 있는 매뉴얼 명령어로 `man` 명령어가 있습니다.  
+```sh
+$ man [OPTION] ... [PAGE] [COMMAND]
+```
+### man page 종류  
+1. 일반 명령어
+2. 시스템 호출
+3. C표준 라이브러리 함수
+4. 특수파일 (/dev 등)
+5. 파일 형식과 Conventions
+6. 게임과 화면 보호기
+7. 기타
+8. 시스템 관리 명령어와 데몬
+
+### man 명령어 예시
+```sh
+$ man man         # man 명령어에 대한 도움말
+$ man printf      # 바이너리 명령어인 printf에 대한 매뉴얼
+$ man 3 printf    # c언어 함수인 printf에 대한 매뉴얼
+$ man socket
+$ man -a printf   # 모두 출력
+$ man -k printf   # 검색
+$ man -k ^printf  # 검색 - 정규 표현식
+```
+
+## 파일 편집기  
+### vi
+환경에 구애받지 않고 GUI가 없어도 사용할 수 있는 대표적인 에디터입니다.  
+다음과 같은 형태로 파일 내용을 편집할 수 있습니다.  
+```sh
+$ vi hello.txt
+```
+
+### vim
+`vi`가 발전된(`vi-improved` 도구) 에디터로 가장 많이 사용되는 에디터 중 하나입니다.  
+`vimtutor` 명령어를 통해 vi 학습기를 켜서 사용 방법을 익히도록 도움을 받을 수 있습니다.  
+```sh
+$ vim hello.txt
+$ vimtutor
+```
+
+### nano
+기본적인 에디팅 기능을 수행할 수 있는 간단한 편집기입니다.  
+```sh
+$ nano hello.txt
+```
